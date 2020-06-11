@@ -1,0 +1,33 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreateMapMonstersTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('map_monster', function (Blueprint $table) {
+            $table->integer('map_id')->unsigned()->index();
+            $table->integer('monster_id')->unsigned()->index();
+            $table->primary(['map_id', 'monster_id']);
+
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('map_monsters');
+    }
+}
