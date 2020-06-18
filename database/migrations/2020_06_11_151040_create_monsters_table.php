@@ -20,8 +20,8 @@ class CreateMonstersTable extends Migration
             $table->string('Position')->nullable();
             $table->string('MoveSpd')->nullable();
             $table->string('MDef')->nullable();
-            $table->string('NameZh')->nullable();
-            $table->string('NameZh__EN')->nullable();
+            $table->text('NameZh')->nullable();
+            $table->text('NameZh__EN')->nullable();
             $table->string('Atk')->nullable();
             $table->string('MAtk')->nullable();
             $table->string('Def')->nullable();
@@ -47,7 +47,7 @@ class CreateMonstersTable extends Migration
             $table->string('Luk')->nullable();
             $table->string('Int')->nullable();
             $table->string('Vit')->nullable();
-            $table->string('Desc__EN')->nullable();
+            $table->text('Desc__EN')->nullable();
             $table->string('IsStar')->nullable();
             $table->string('CopySkill')->nullable();
             $table->timestamps();

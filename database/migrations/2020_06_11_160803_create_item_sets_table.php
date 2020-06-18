@@ -13,13 +13,15 @@ class CreateItemSetsTable extends Migration
      */
     public function up()
     {
-        Schema::create('item_set', function (Blueprint $table) {
+        Schema::create('item_sets', function (Blueprint $table) {
+            $table->id();
             $table->integer('item_id')->index();
-            $table->string('EffectDesc')->nullable();
-            $table->string('EffectDesc__EN')->nullable();
-            $table->string('EquipSuitDsc')->nullable();
-            $table->string('EquipSuitDsc__EN')->nullable();
-            $table->string('items')->nullable();
+            $table->text('EffectDesc')->nullable();
+            $table->text('EffectDesc__EN')->nullable();
+            $table->text('EquipSuitDsc')->nullable();
+            $table->text('EquipSuitDsc__EN')->nullable();
+            $table->text('items')->nullable();
+            $table->timestamps();
         });
     }
 

@@ -19,10 +19,10 @@ class CreateItemsTable extends Migration
             $table->string('SellPrice')->nullable();
             $table->string('Icon')->nullable();
             $table->string('Desc')->nullable();
-            $table->string('Desc__EN')->nullable();
+            $table->text('Desc__EN')->nullable();
             $table->string('Type')->nullable();
-            $table->string('NameZh')->nullable();
-            $table->string('NameZh__EN')->nullable();
+            $table->text('NameZh')->nullable();
+            $table->text('NameZh__EN')->nullable();
             $table->string('AuctionPrice')->nullable();
             $table->string('TypeName')->nullable();
             $table->string('ComposeOutputID')->nullable();
@@ -35,9 +35,10 @@ class CreateItemsTable extends Migration
             $table->string('SynthesisRecipe')->nullable();
             $table->string('PriorEquipment')->nullable();
             $table->string('TierList')->nullable();
-            $table->string('UnlockEffect')->nullable();
-            $table->string('DepositEffect')->nullable();
-            $table->string('CanEquip')->nullable();
+            $table->text('UnlockEffect')->nullable();
+            $table->text('DepositEffect')->nullable();
+            $table->text('CanEquip')->nullable();
+            $table->string('Quality')->nullable();
             
 
             $table->timestamps();

@@ -16,11 +16,11 @@ class CreateMapsTable extends Migration
         Schema::create('maps', function (Blueprint $table) {
             $table->id();
             $table->integer('key_id')->nullable();
-            $table->string('Desc__EN')->nullable();
-            $table->string('NameEn')->nullable();
+            $table->text('Desc__EN')->nullable();
+            $table->text('NameEn')->nullable();
             $table->string('Type')->nullable();
-            $table->string('NameZh')->nullable();
-            $table->string('NameZh__EN')->nullable();
+            $table->text('NameZh')->nullable();
+            $table->text('NameZh__EN')->nullable();
             $table->string('MapArea')->nullable();
             $table->timestamps();
         });

@@ -14,4 +14,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('getItems/{id}', 'ItemController@getItem');
+Route::get('getMonster/{id}', 'ItemController@getMonster');
+Route::get('getMonsters', 'ItemController@getMonsters');
+
+// api
+Route::get('monsters', 'MonsterController@index');
+Route::get('monster/{id}', 'MonsterController@getMonster');
