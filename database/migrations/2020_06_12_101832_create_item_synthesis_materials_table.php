@@ -17,7 +17,7 @@ class CreateItemSynthesisMaterialsTable extends Migration
             $table->id();
             $table->integer('item_syntheses_id')->index();
             $table->integer('item_id')->index();
-            $table->string('quantity')->index();
+            $table->string('quantity')->nullable();
             $table->timestamps();
         });
     }

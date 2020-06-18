@@ -14,8 +14,8 @@ class CreateItemJobsTable extends Migration
     public function up()
     {
         Schema::create('item_job', function (Blueprint $table) {
-            $table->integer('item_id')->unsigned()->index();
-            $table->string('job_name')->index();
+            $table->integer('item_id')->nullable();
+            $table->string('job_name')->nullable();
         });
     }
 

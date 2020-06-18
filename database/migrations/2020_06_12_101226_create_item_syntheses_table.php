@@ -16,9 +16,9 @@ class CreateItemSynthesesTable extends Migration
         Schema::create('item_syntheses', function (Blueprint $table) {
             $table->id();
             $table->integer('item_id')->index();
-            $table->integer('item_output')->index();
-            $table->string('cost')->index();
-            $table->string('isInput')->index();
+            $table->integer('item_output')->nullable();
+            $table->string('cost')->nullable();
+            $table->string('isInput')->nullable();
             $table->timestamps();
         });
     }

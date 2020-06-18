@@ -17,7 +17,7 @@ class CreateItemSynthesisEquipmentTable extends Migration
             $table->id();
             $table->integer('item_syntheses_id')->index();
             $table->integer('item_id')->index();
-            $table->string('tier')->index();
+            $table->string('tier')->nullable();
             $table->timestamps();
         });
     }
