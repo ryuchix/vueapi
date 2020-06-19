@@ -17,4 +17,8 @@ class Monster extends Model
     public function getIconAttribute($value) {
         return $this->attributes['icon'] = url('uploads/monsters/'.$value);
     }
+
+    public function getTypeAttribute($value) {
+        return $this->attributes['type'] = strtolower($value);
+    }
 }
