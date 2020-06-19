@@ -14,4 +14,8 @@ class Item extends Model
         return $this->attributes['icon'] = url('uploads/items/'.$value);
     }
 
+    public function getStatExtraAttribute($value) {
+        return $this->attributes['stat_extra'] = explode(' ,', $value);
+    }
+
 }
