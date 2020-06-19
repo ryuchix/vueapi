@@ -61,6 +61,33 @@ class ItemController extends Controller
         return Item::where('id', $id)->first();
     }
 
+    public function getExtraStat() {
+        $items = Item::get();
+        $json = file_get_contents('https://www.romcodex.com/api/item/44303');
+        $result = json_decode($json, true);
+
+        foreach ($items as $item) {
+            try {
+                $json = file_get_contents('https://www.romcodex.com/api/item/'.$item->key_id);
+                $result = json_decode($json, true);
+                
+                if (array_key_exists("AttrData", $result)) {
+                    $_item = Item::find($item->id);
+                    if (array_key_exists("Stat", $result['AttrData'])) {
+                        $_item->stat = json_encode($result['AttrData']['Stat']);
+                    }
+                    if (array_key_exists("StatExtra", $result['AttrData'])) {
+                        $_item->stat_extra = json_encode($result['AttrData']['StatExtra']);
+                    }
+                    $_item->save();
+                }
+
+            } catch (\Throwable $th) {
+                //throw $th;
+            }
+        }
+    }
+
     // public function getMonsters() {
     //     $json = file_get_contents('https://www.romcodex.com/api/monster');
     //     $result = json_decode($json, true);

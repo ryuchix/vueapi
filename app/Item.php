@@ -15,7 +15,11 @@ class Item extends Model
     }
 
     public function getStatExtraAttribute($value) {
-        return $this->attributes['stat_extra'] = explode(' ,', $value);
+        return $this->attributes['stat_extra'] = json_decode($value, true);
+    }
+
+    public function getStatAttribute($value) {
+        return $this->attributes['stat_extra'] = json_decode($value, true);
     }
 
 }
