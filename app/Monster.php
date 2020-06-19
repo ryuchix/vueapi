@@ -14,4 +14,7 @@ class Monster extends Model
         return $this->belongsToMany('App\Item');
     }
 
+    public function getIconAttribute($value) {
+        return $this->attributes['icon'] = url('uploads/monsters/'.$value);
+    }
 }
