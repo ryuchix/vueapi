@@ -53,7 +53,6 @@ class RenameColumnInItemsTable extends Migration
             $table->renameColumn('EffectDesc__EN', 'effect_desc_en');
             $table->renameColumn('EquipSuitDsc', 'equip_suit_desc');
             $table->renameColumn('EquipSuitDsc__EN', 'equip_suit_desc_en');
-            $table->renameColumn('Desc__EN', 'desc_en');
         });
 
         Schema::table('npcs', function (Blueprint $table) {
