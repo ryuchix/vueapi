@@ -14,6 +14,8 @@ class MonsterController extends Controller
     }
 
     public function getMonster($id) {
-        return Monster::find($id);
+        $monster =  Monster::where('id', $id)->with('items')->first();
+
+        return $monster;
     }
 }
