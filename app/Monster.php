@@ -25,4 +25,8 @@ class Monster extends Model
     public function getStarAttribute($value) {
         return $this->attributes['type'] = $value == 1 ? 'star' : '';
     }
+
+    public function getSizeAttribute($value) {
+        return $this->attributes['size'] = $value == 'L' ? 'Large' : ($value == 'M' ? 'Medium' : ($value == 'S' ? 'Small' : ''));
+    }
 }
