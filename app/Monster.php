@@ -21,4 +21,8 @@ class Monster extends Model
     public function getTypeAttribute($value) {
         return $this->attributes['type'] = $value != 'Monster' ? strtolower($value) : '';
     }
+
+    public function getStarAttribute($value) {
+        return $this->attributes['type'] = $value == 1 ? 'star' : '';
+    }
 }
