@@ -50,7 +50,9 @@ class ItemController extends Controller
     }
 
     public function getEquipment($id) {
-        return Item::where('id', $id)->with('monsters')->first();
+        $equip = Item::where('id', $id)->with('monsters')->first();
+        $equip['slot'] = strpos($equip->name_en,'[1]') !== false || strpos($equip->name_en, '[2]') !== false;
+        return $equip;
     }
 
     public function cards() {
