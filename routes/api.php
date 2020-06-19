@@ -16,7 +16,14 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('getMonster/{id}', 'ItemController@getMonster');
 Route::get('getMonsters', 'ItemController@getMonsters');
+Route::get('saveMonsterItem', 'MonsterController@saveMonsterItem');
 
 // api
 Route::get('monsters', 'MonsterController@index');
 Route::get('monster/{id}', 'MonsterController@getMonster');
+
+Route::get('equipments', 'ItemController@equipments');
+Route::get('equipment/{id}', 'ItemController@getEquipment');
+
+Route::get('cards', 'ItemController@cards');
+Route::get('card/{id}', 'ItemController@getCard');
