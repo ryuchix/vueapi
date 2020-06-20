@@ -55,6 +55,8 @@ class ItemController extends Controller
         $equip['tradable'] = $equip->auction_price == 1 ? true : false;
         $itemtiers = ItemTier::where('item_id', $equip->id)->with('materials')->get();
         $equip['tiers'] = $equip->tier_list == 1 ? $itemtiers : null;
+        $itemsets = ItemSet::where('item_id', $equip->id)->select('effect_desc_en', 'item_id', 'items', 'equip_suit_desc_en', 'id')->get();
+        $equip['sets'] = $equip->item_set == 1 ? $itemsets : null;
         return $equip;
     }
 
@@ -66,32 +68,86 @@ class ItemController extends Controller
         return Item::where('id', $id)->first();
     }
 
-    public function getExtraStat() {
-        $items = Item::get();
-        $json = file_get_contents('https://www.romcodex.com/api/item/44303');
-        $result = json_decode($json, true);
+    public function getItemSets() {
+        $items = Item::where('item_set', null)->get();
 
-        foreach ($items as $item) {
+        foreach ($items as $key => $item) {
             try {
                 $json = file_get_contents('https://www.romcodex.com/api/item/'.$item->key_id);
                 $result = json_decode($json, true);
-                
-                if (array_key_exists("AttrData", $result)) {
-                    $_item = Item::find($item->id);
-                    if (array_key_exists("Stat", $result['AttrData'])) {
-                        $_item->stat = json_encode($result['AttrData']['Stat']);
+                if (array_key_exists("ItemSet", $result)) {
+    
+                    foreach ($result['ItemSet'] as $set) {
+                        $itemsets = new ItemSet();
+                        $itemsets->item_id = $item->id;
+                        $itemsets->effect_desc = $set['EffectDesc'];
+                        $itemsets->effect_desc_en = $set['EffectDesc__EN'];
+                        $itemsets->equip_suit_desc = $set['EquipSuitDsc'];
+                        $itemsets->equip_suit_desc_en = $set['EquipSuitDsc__EN'];
+                        $itemsets->items = json_encode(array_values($set['Suitid']));
+                        $itemsets->save();
                     }
-                    if (array_key_exists("StatExtra", $result['AttrData'])) {
-                        $_item->stat_extra = json_encode($result['AttrData']['StatExtra']);
-                    }
-                    $_item->save();
+    
                 }
-
+    
             } catch (\Throwable $th) {
-                //throw $th;
+                return $th;
             }
         }
     }
+
+    // public function getExtraStat() {
+    //     $items = Item::get();
+    //     $json = file_get_contents('https://www.romcodex.com/api/item/44303');
+    //     $result = json_decode($json, true);
+
+    //     foreach ($items as $item) {
+    //         try {
+    //             $json = file_get_contents('https://www.romcodex.com/api/item/'.$item->key_id);
+    //             $result = json_decode($json, true);
+                
+    //             if (array_key_exists("AttrData", $result)) {
+    //                 $_item = Item::find($item->id);
+    //                 if (array_key_exists("Stat", $result['AttrData'])) {
+    //                     $_item->stat = json_encode($result['AttrData']['Stat']);
+    //                 }
+    //                 if (array_key_exists("StatExtra", $result['AttrData'])) {
+    //                     $_item->stat_extra = json_encode($result['AttrData']['StatExtra']);
+    //                 }
+    //                 $_item->save();
+    //             }
+
+    //         } catch (\Throwable $th) {
+    //             //throw $th;
+    //         }
+    //     }
+    // }
+
+    // public function addSingleItem() {
+    //     $json = file_get_contents('https://www.romcodex.com/api/item/52821');
+    //     $result = json_decode($json, true);
+
+    //     $checkItem = Item::where('key_id', $result['id'])->first();
+
+    //     if ($checkItem) {
+    //         $item = new Item();
+    //         $item->key_id = $result['key_id'];
+    //         copy('https://www.romcodex.com/icons/item/'.$result['Icon'].'.png', public_path('/uploads/items/'.Str::slug($result['key_id'], '-').'_img.png'));
+    //         $item->sell_price = array_key_exists("SellPrice", $result) ? $result['SellPrice'] : null;
+    //         $item->icon = Str::slug($result['key_id'], '-').'_img.png';
+    //         $item->desc = array_key_exists("Desc", $result) ? $result['Desc'] : null;
+    //         $item->desc_en = array_key_exists("Desc__EN", $result) ? $result['Desc__EN'] : null;
+    //         $item->type = array_key_exists("Type", $result) ? $result['Type'] : null;
+    //         $item->name_ch = array_key_exists("NameZh", $result) ? $result['NameZh'] : null;
+    //         $item->name_en = array_key_exists("NameZh__EN", $result) ? $result['NameZh__EN'] : null;
+    //         $item->auction_price = array_key_exists("AuctionPrice", $result) ? $result['AuctionPrice'] : null;
+    //         $item->type_name = array_key_exists("TypeName", $result) ? $result['TypeName'] : null;
+    //         $item->quality = array_key_exists("Quality", $result) ? $result['Quality'] : null;
+    //         $item->save();
+
+    //     }
+
+    // }
 
     // public function getMonsters() {
     //     $json = file_get_contents('https://www.romcodex.com/api/monster');

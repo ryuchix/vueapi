@@ -17,9 +17,13 @@ class Item extends Model
     public function getStatExtraAttribute($value) {
         return $this->attributes['stat_extra'] = json_decode($value, true);
     }
-
+    
     public function getStatAttribute($value) {
         return $this->attributes['stat_extra'] = json_decode($value, true);
+    }
+
+    public function getCanEquipAttribute($value) {
+        return $this->attributes['can_equip'] = json_decode($value, true);
     }
 
     public function getUnlockEffectAttribute($value) {
