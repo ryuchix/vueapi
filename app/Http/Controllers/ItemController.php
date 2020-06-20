@@ -53,6 +53,8 @@ class ItemController extends Controller
         $equip = Item::where('id', $id)->with('monsters')->first();
         $equip['slot'] = strpos($equip->name_en,'[1]') !== false || strpos($equip->name_en, '[2]') !== false;
         $equip['tradable'] = $equip->auction_price == 1 ? true : false;
+        $itemtiers = ItemTier::where('item_id', $equip->id)->with('materials')->get();
+        $equip['tiers'] = $equip->tier_list == 1 ? $itemtiers : null;
         return $equip;
     }
 
