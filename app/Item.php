@@ -22,4 +22,18 @@ class Item extends Model
         return $this->attributes['stat_extra'] = json_decode($value, true);
     }
 
+    public function getUnlockEffectAttribute($value) {
+        $arrays = substr($value, 10);
+        $removeArray = explode(', ', $arrays);
+        $newArray = array_shift($removeArray);
+        return $this->attributes['unlock_effect'] = implode('', $removeArray);
+    }
+
+    public function getDepositEffectAttribute($value) {
+        $arrays = substr($value, 10);
+        $removeArray = explode(', ', $arrays);
+        $newArray = array_shift($removeArray);
+        return $this->attributes['unlock_effect'] = implode('', $removeArray);
+    }
+
 }
