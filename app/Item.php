@@ -59,7 +59,8 @@ class Item extends Model
         'Redeem item',
         'Seafood',
         'Spice',
-        'Vegetable'
+        'Vegetable',
+        null
     ];
 
 

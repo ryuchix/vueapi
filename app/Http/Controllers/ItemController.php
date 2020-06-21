@@ -75,7 +75,8 @@ class ItemController extends Controller
         'Redeem item',
         'Seafood',
         'Spice',
-        'Vegetable'
+        'Vegetable',
+        null
     ];
 
     public function equipments() {
