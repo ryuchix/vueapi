@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Item extends Model
 {
     public function monsters() {
-        return $this->belongsToMany('App\Monster');
+        return $this->belongsToMany('App\Monster')->select('id', 'name_en', 'icon', 'element', 'size', 'race', 'type', 'star');
     }
 
     public function getIconAttribute($value) {
@@ -39,31 +39,4 @@ class Item extends Model
         $newArray = array_shift($removeArray);
         return $this->attributes['unlock_effect'] = implode('', $removeArray);
     }
-
-    public function ItemList() {
-        $equips = [
-            'Weapon - Sword', 
-            'Weapon - Dagger',
-            'Weapon - Axe',
-            'Weapon - Book',
-            'Weapon - Bow',
-            'Weapon - Katar',
-            'Weapon - Knuckles',
-            'Weapon - Spear',
-            'Whips',
-            'Weapon - Staff',
-            'Weapon - Mace',
-            'Off-hand - Jewelry',
-            'Off-hand - Bracer',
-            'Off-hand - Bangle',
-            'Musical Instrument',
-            'Garments',
-            'Footgears',
-            'Armors',
-            'Accessory',
-            'Off-hand - Shield'];
-            
-        return $equips;
-    }
-
 }

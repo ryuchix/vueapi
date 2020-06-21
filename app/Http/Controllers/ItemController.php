@@ -106,8 +106,8 @@ class ItemController extends Controller
     }
 
     public function getItem($id) {
-        return Item::where('id', $id)->whereIn('type_name', $this->items__)->firstOrFail();
-    } 
+        return Item::where('id', $id)->whereIn('type_name', $this->items__)->with('monsters')->firstOrFail();
+    }
 
     public function getItemSets() {
         $items = Item::where('item_set', null)->get();
