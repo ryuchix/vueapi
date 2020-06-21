@@ -181,8 +181,10 @@ class ItemController extends Controller
         $equip['after'] = $equip->synthesis_recipe != null ? Item::where('key_id', $itemSynth->item_output)->select('id', 'icon', 'name_en')->first() : null;
         $jobs = [];
         $can_equip = json_decode($equip->can_equip);
-        foreach($can_equip as $v) {
-            $jobs[] = $this->jobs__[$v];
+        if ($can_equip != null) {
+            foreach($can_equip as $v) {
+                $jobs[] = $this->jobs__[$v];
+            }
         }
         $equip['jobs'] = $jobs;
 
