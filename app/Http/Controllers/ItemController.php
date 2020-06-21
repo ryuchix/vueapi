@@ -91,6 +91,12 @@ class ItemController extends Controller
         $equip['tiers'] = $equip->tier_list == 1 ? $itemtiers : null;
         $itemsets = ItemSet::where('item_id', $equip->id)->select('effect_desc_en', 'item_id', 'items', 'equip_suit_desc_en', 'id')->get();
         $equip['sets'] = $equip->item_set == 1 ? $itemsets : null;
+        $equip['before'] = $equip->prior_equipment != null ? Item::where('key_id', $equip->prior_equipment)->select('id', 'icon', 'name_en')->first() : null;
+        
+        $itemSynth = ItemSynthesis::where('item_id', $equip->id)->first();
+        
+        $equip['after'] = $equip->synthesis_recipe != null ? Item::where('key_id', $itemSynth->item_output)->select('id', 'icon', 'name_en')->first() : null;
+
         return $equip;
     }
 
@@ -171,9 +177,6 @@ class ItemController extends Controller
                 $item_->item_set = array_key_exists("ItemSet", $result);
                 $item_->compose_recipe = array_key_exists("ComposeRecipe", $result);
 
-  
-                
-    
                 if (array_key_exists("TierList", $result)) {
                     $item_->tier_list = array_key_exists("TierList", $result);
                     $finditemfortier = Item::where('key_id', $result['id'])->first();
