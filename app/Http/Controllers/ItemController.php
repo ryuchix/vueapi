@@ -107,7 +107,9 @@ class ItemController extends Controller
     }
 
     public function getItem($id) {
-        return Item::where('id', $id)->whereIn('type_name', $this->items__)->with('monsters')->firstOrFail();
+        $item = Item::where('id', $id)->whereIn('type_name', $this->items__)->with('monsters')->firstOrFail();
+        $item['tradable'] = $item->auction_price == 1 ? true : false;
+        return $item;
     }
 
     public function getItemSets() {
