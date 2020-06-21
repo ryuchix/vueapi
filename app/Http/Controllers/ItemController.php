@@ -79,6 +79,91 @@ class ItemController extends Controller
         null
     ];
 
+    private $jobs__ = [
+        0 => 'All jobs',
+        1 => 'Novice',
+        11 => 'Swordsman',
+        12 => 'Knight',
+        13 => 'Lord Knight',
+        14 => 'Rune Knight',
+        15 => 'Runemaster',
+        
+        72 => 'Crusader',
+        73 => 'Paladin',
+        74 => 'Royal Guard',
+        75 => 'Divine Avenger',
+        
+        21 => 'Mage',
+        22 => 'Wizard',
+        23 => 'High Wizard',
+        24 => 'Warlock',
+        25 => 'Arcane Master',
+        
+        82 => 'Sage',
+        83 => 'Professor',
+        84 => 'Sorcerer',
+        85 => 'Chronomancer',
+        
+        31 => 'Thief',
+        32 => 'Assassin',
+        33 => 'Assassin Cross',
+        34 => 'Guillotine Cross',
+        35 => 'Soulblade Cross',
+         
+        92 => 'Rogue',
+        93 => 'Stalker',
+        94 => 'Shadow Chaser',
+        95 => 'Phantom Dancer',
+        
+        41 => 'Archer',
+        42 => 'Hunter',
+        43 => 'Sniper',
+        44 => 'Ranger',
+        45 => 'Stellar Hunter',
+         
+        102 => 'Bard',
+        103 => 'Clown',
+        104 => 'Minstrel',
+        105 => 'Solar Trouvere',
+        
+        112 => 'Dancer',
+        113 => 'Gypsy',
+        114 => 'Wanderer',
+        115 => 'Luna Danseuse',
+        
+        51 => 'Acolyte',
+        52 => 'Priest',
+        53 => 'High Priest',
+        54 => 'Archbishop',
+        55 => 'Saint',
+        
+        122 => 'Monk',
+        123 => 'Champion',
+        124 => 'Shura',
+        125 => 'Dragon Fist',
+        
+        61 => 'Merchant',
+        62 => 'Blacksmith',
+        63 => 'Whitesmith',
+        64 => 'Mechanic',
+        65 => 'Lightbringer',
+        
+        132 => 'Alchemist',
+        133 => 'Creator',
+        134 => 'Genetic',
+        135 => 'Begetter',
+        
+        143 => 'Advanced Novice',
+        144 => 'Super Novice',
+        145 => 'Novice Guardian',
+        
+        151 => 'Warlock Doram',
+        152 => 'Spiritualist',
+        153 => 'Summoner',
+        154 => 'Animist',
+        155 => 'Spirit Whisperer'
+    ];
+
     public function equipments() {
         return Item::whereIn('type_name', $this->equips__)->orderBy('name_en')->paginate();
     }
@@ -92,10 +177,14 @@ class ItemController extends Controller
         $itemsets = ItemSet::where('item_id', $equip->id)->select('effect_desc_en', 'item_id', 'items', 'equip_suit_desc_en', 'id')->get();
         $equip['sets'] = $equip->item_set == 1 ? $itemsets : null;
         $equip['before'] = $equip->prior_equipment != null ? Item::where('key_id', $equip->prior_equipment)->select('id', 'icon', 'name_en')->first() : null;
-        
         $itemSynth = ItemSynthesis::where('item_id', $equip->id)->first();
-        
         $equip['after'] = $equip->synthesis_recipe != null ? Item::where('key_id', $itemSynth->item_output)->select('id', 'icon', 'name_en')->first() : null;
+        $jobs = [];
+        $can_equip = json_decode($equip->can_equip);
+        foreach($can_equip as $v) {
+            $jobs[] = $this->jobs__[$v];
+        }
+        $equip['jobs'] = $jobs;
 
         return $equip;
     }

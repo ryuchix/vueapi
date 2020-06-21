@@ -80,9 +80,9 @@ class Item extends Model
         return $this->attributes['stat_extra'] = json_decode($value, true);
     }
 
-    public function getCanEquipAttribute($value) {
-        return $this->attributes['can_equip'] = json_decode($value, true);
-    }
+    // public function getCanEquipAttribute($value) {
+    //     return $this->attributes['can_equip'] = json_decode($value, true);
+    // }
 
     public function getUnlockEffectAttribute($value) {
         $arrays = substr($value, 10);
