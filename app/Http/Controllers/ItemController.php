@@ -79,7 +79,7 @@ class ItemController extends Controller
     ];
 
     public function equipments() {
-        return Item::whereIn('type_name', $this->equips)->orderBy('name_en')->paginate();
+        return Item::whereIn('type_name', $this->equips__)->orderBy('name_en')->paginate();
     }
 
     public function getEquipment($id) {
