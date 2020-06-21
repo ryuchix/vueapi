@@ -40,4 +40,30 @@ class Item extends Model
         return $this->attributes['unlock_effect'] = implode('', $removeArray);
     }
 
+    public function ItemList() {
+        $equips = [
+            'Weapon - Sword', 
+            'Weapon - Dagger',
+            'Weapon - Axe',
+            'Weapon - Book',
+            'Weapon - Bow',
+            'Weapon - Katar',
+            'Weapon - Knuckles',
+            'Weapon - Spear',
+            'Whips',
+            'Weapon - Staff',
+            'Weapon - Mace',
+            'Off-hand - Jewelry',
+            'Off-hand - Bracer',
+            'Off-hand - Bangle',
+            'Musical Instrument',
+            'Garments',
+            'Footgears',
+            'Armors',
+            'Accessory',
+            'Off-hand - Shield'];
+            
+        return $equips;
+    }
+
 }

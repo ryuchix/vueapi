@@ -22,35 +22,68 @@ use Str;
 
 class ItemController extends Controller
 {
+    private $equips__ = [
+        'Weapon - Sword', 
+        'Weapon - Dagger',
+        'Weapon - Axe',
+        'Weapon - Book',
+        'Weapon - Bow',
+        'Weapon - Katar',
+        'Weapon - Knuckles',
+        'Weapon - Spear',
+        'Whips',
+        'Weapon - Staff',
+        'Weapon - Mace',
+        'Off-hand - Jewelry',
+        'Off-hand - Bracer',
+        'Off-hand - Bangle',
+        'Musical Instrument',
+        'Garments',
+        'Footgears',
+        'Armors',
+        'Accessory',
+        'Off-hand - Shield',
+        'Costume',
+        'Face'
+    ];
+
+    private $cards__ = [
+        'Accessory card',
+        'Armor card',
+        'Garments card',
+        'Headwear card',
+        'Off-hand card',
+        'Shoe card',
+        'Weapon card',
+        'Accessory card'
+    ];
+
+    private $items__ = [
+        'Blueprint',
+        'Consumables',
+        'Crafting material',
+        "Death's Breath",
+        'Enhance equipment',
+        'Blueprint',
+        'Blueprint',
+        'Fruit',
+        'Holiday material',
+        'Meat',
+        'Mora coin',
+        'Potion / Effect',
+        'Quest triggering item',
+        'Redeem item',
+        'Seafood',
+        'Spice',
+        'Vegetable'
+    ];
 
     public function equipments() {
-        $equips = [
-            'Weapon - Sword', 
-            'Weapon - Dagger',
-            'Weapon - Axe',
-            'Weapon - Book',
-            'Weapon - Bow',
-            'Weapon - Katar',
-            'Weapon - Knuckles',
-            'Weapon - Spear',
-            'Whips',
-            'Weapon - Staff',
-            'Weapon - Mace',
-            'Off-hand - Jewelry',
-            'Off-hand - Bracer',
-            'Off-hand - Bangle',
-            'Musical Instrument',
-            'Garments',
-            'Footgears',
-            'Armors',
-            'Accessory',
-            'Off-hand - Shield'];
-
-        return Item::whereIn('type_name', $equips)->paginate();
+        return Item::whereIn('type_name', $this->equips)->orderBy('name_en')->paginate();
     }
 
     public function getEquipment($id) {
-        $equip = Item::where('id', $id)->with('monsters')->first();
+        $equip = Item::where('id', $id)->whereIn('type_name', $this->equips__)->with('monsters')->firstOrFail();
         $equip['slot'] = strpos($equip->name_en,'[1]') !== false || strpos($equip->name_en, '[2]') !== false;
         $equip['tradable'] = $equip->auction_price == 1 ? true : false;
         $itemtiers = ItemTier::where('item_id', $equip->id)->with('materials')->get();
@@ -61,12 +94,20 @@ class ItemController extends Controller
     }
 
     public function cards() {
-
+        return Item::whereIn('type_name', $this->cards__)->orderBy('name_en')->paginate();
     }
 
     public function getCard($id) {
-        return Item::where('id', $id)->first();
+        return Item::where('id', $id)->whereIn('type_name', $this->cards__)->firstOrFail();
     }
+
+    public function getItems() {
+        return Item::whereIn('type_name', $this->items__)->orderBy('name_en')->paginate();
+    }
+
+    public function getItem($id) {
+        return Item::where('id', $id)->whereIn('type_name', $this->items__)->firstOrFail();
+    } 
 
     public function getItemSets() {
         $items = Item::where('item_set', null)->get();
@@ -575,7 +616,7 @@ class ItemController extends Controller
     // }
 
 
-    // // public function getItem($id) {
+    // // public function getItems($id) {
     // //     $json = file_get_contents('https://www.romcodex.com/api/item/'.$id);
     // //     $result = json_decode($json, true);
 

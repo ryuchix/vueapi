@@ -31,4 +31,7 @@ Route::get('equipment/{id}', 'ItemController@getEquipment');
 Route::get('cards', 'ItemController@cards');
 Route::get('card/{id}', 'ItemController@getCard');
 
+Route::get('items', 'ItemController@getItems');
+Route::get('item/{id}', 'ItemController@getItem');
+
 
