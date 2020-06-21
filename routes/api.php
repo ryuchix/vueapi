@@ -20,6 +20,7 @@ Route::get('saveMonsterItem', 'MonsterController@saveMonsterItem');
 Route::get('saveExtraStat', 'ItemController@getExtraStat');
 Route::get('addSingleItem', 'ItemController@addSingleItem');
 Route::get('getItemSets', 'ItemController@getItemSets');
+Route::get('runNull', 'ItemController@runNull');
 
 // api
 Route::get('monsters', 'MonsterController@index');

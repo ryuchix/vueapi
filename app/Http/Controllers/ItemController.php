@@ -140,6 +140,68 @@ class ItemController extends Controller
         }
     }
 
+    public function runNull() {
+        $items = Item::where('icon', null)->get();
+        foreach ($items as $key => $item) {
+            try {
+                $json = file_get_contents('https://www.romcodex.com/api/item/'.$item->key_id);
+                $result = json_decode($json, true);
+
+                copy('https://www.romcodex.com/icons/item/'.$result['Icon'].'.png', public_path('/uploads/items/'.Str::slug($result['key_id'], '-').'_img.png'));
+
+                $item_ = Item::find($item->id);
+                $item_->sell_price = array_key_exists("SellPrice", $result) ? $result['SellPrice'] : null;
+                $item_->icon = Str::slug($result['key_id'], '-').'_img.png';
+                $item_->desc = array_key_exists("Desc", $result) ? $result['Desc'] : null;
+                $item_->desc_en = array_key_exists("Desc__EN", $result) ? $result['Desc__EN'] : null;
+                $item_->type = array_key_exists("Type", $result) ? $result['Type'] : null;
+                $item_->name_ch = array_key_exists("NameZh", $result) ? $result['NameZh'] : null;
+                $item_->name_en = array_key_exists("NameZh__EN", $result) ? $result['NameZh__EN'] : null;
+                $item_->auction_price = array_key_exists("AuctionPrice", $result) ? $result['AuctionPrice'] : null;
+                $item_->type_name = array_key_exists("TypeName", $result) ? $result['TypeName'] : null;
+                $item_->compose_output_id = array_key_exists("ComposeOutputID", $result) ? $result['ComposeOutputID'] : null;
+                $item_->compose_id = array_key_exists("ComposeID", $result) ? $result['ComposeID'] : null;
+                if (array_key_exists("AttrData", $result)) {
+                    $item_->stat = implode(", ", array_key_exists("Stat", $result['AttrData']) ? $result['AttrData']['Stat'] : []);
+                    $item_->stat_extra = implode(", ", array_key_exists("StatExtra", $result['AttrData']) ? $result['AttrData']['StatExtra'] : []);
+                    $item_->stat_type = array_key_exists("Type", $result['AttrData']) ? $result['AttrData']['Type'] : '';
+                    $item_->can_equip = array_key_exists("CanEquip", $result['AttrData']) ? $result['AttrData']['CanEquip'] : '';
+                }
+
+                $item_->item_set = array_key_exists("ItemSet", $result);
+                $item_->compose_recipe = array_key_exists("ComposeRecipe", $result);
+
+  
+                
+    
+                if (array_key_exists("TierList", $result)) {
+                    $item_->tier_list = array_key_exists("TierList", $result);
+                    $finditemfortier = Item::where('key_id', $result['id'])->first();
+                    $this->addTier($finditemfortier->id, $result['TierList']);
+                }
+    
+                if (array_key_exists("SynthesisRecipe", $result) && $result['TypeName'] != 'Crafting material') {
+                    $item_->synthesis_recipe = array_key_exists("SynthesisRecipe", $result);
+                    $finditemforsynth = Item::where('key_id', $result['id'])->first();
+                    $this->addSynthesis($finditemforsynth->id, $result['SynthesisRecipe']);
+                }
+
+                //$item_->synthesis_recipe = array_key_exists("SynthesisRecipe", $result);
+                $item_->prior_equipment = array_key_exists("PriorEquipment", $result) ? $result['PriorEquipment']['key_id'] : null;
+                //$item_->tier_list = array_key_exists("TierList", $result);
+      
+                $item_->unlock_effect = array_key_exists("UnlockEffect", $result) ? $this->saveUnlockDeposit($result['UnlockEffect']) : null;
+                $item_->deposit_effect = array_key_exists("DepositEffect", $result) ? $this->saveUnlockDeposit($result['DepositEffect']) : null;
+
+                $item_->quality = array_key_exists("Quality", $result) ? $result['Quality'] : null;
+                $item_->save();
+
+            } catch (\Throwable $th) {
+                throw $th;
+            }
+        }
+    }
+
     // public function getExtraStat() {
     //     $items = Item::get();
     //     $json = file_get_contents('https://www.romcodex.com/api/item/44303');
@@ -344,39 +406,39 @@ class ItemController extends Controller
     //     return array_key_exists($key, $obj) ? $obj[$key] : null;
     // }
 
-    // public function saveUnlockDeposit($obj) {
-    //     foreach ($obj as $key => $value) {
-    //         return implode(", ", $value);
-    //     }
-    // }
+    public function saveUnlockDeposit($obj) {
+        foreach ($obj as $key => $value) {
+            return implode(", ", $value);
+        }
+    }
 
-    // public function addItemSet($id, $details) {
+    public function addItemSet($id, $details) {
 
-    //     foreach ($details as $key => $item) {
+        foreach ($details as $key => $item) {
 
-    //         $itemset = new ItemSet();
-    //         $itemset->item_id = $id;
-    //         $itemset->EffectDesc = $item['EffectDesc'];
-    //         $itemset->EffectDesc__EN = $item['EffectDesc__EN'];
-    //         $itemset->EquipSuitDsc = $item['EquipSuitDsc'];
-    //         $itemset->EquipSuitDsc__EN = $item['EquipSuitDsc__EN'];
-    //         $itemset->items = null;
-    //         $itemset->save();
+            $itemset = new ItemSet();
+            $itemset->item_id = $id;
+            $itemset->effect_desc = $item['EffectDesc'];
+            $itemset->effect_desc_en = $item['EffectDesc__EN'];
+            $itemset->equip_suit_desc = $item['EquipSuitDsc'];
+            $itemset->equip_suit_desc_en = $item['EquipSuitDsc__EN'];
+            $itemset->items = null;
+            $itemset->save();
             
-    //         foreach ($item['Suitid'] as $key => $value) {
-    //             $setid = [];
-    //             $itemset_ = 
-    //             array_push($setid, $value['key_id']);
+            foreach ($item['Suitid'] as $key => $value) {
+                $setid = [];
+                $itemset_ = 
+                array_push($setid, $value['key_id']);
 
-    //             $item = ItemSet::find($itemset->id);
-    //             $item->items = implode(" ,", $setid);
-    //             $item->save();
+                $item = ItemSet::find($itemset->id);
+                $item->items = implode(" ,", $setid);
+                $item->save();
                 
-    //             $this->addItem(null, null, $key);
+                //$this->addItem(null, null, $key);
 
-    //         }
-    //     }
-    // }
+            }
+        }
+    }
 
     // public function addItem($monster = null, $details = null, $itemid = null) {
 
@@ -565,58 +627,58 @@ class ItemController extends Controller
 
     // }
 
-    // public function addSynthesis($id, $details) {
-    //     $synthid = [];
-    //     foreach ($details as $key => $output) {
-    //         $itemsynth = new ItemSynthesis();
-    //         $itemsynth->item_id = $id;
-    //         $itemsynth->item_output = $output['output']['id'];
-    //         $itemsynth->cost = $output['cost'];
-    //         $itemsynth->isInput = $output['isInput'];
-    //         $itemsynth->save();
+    public function addSynthesis($id, $details) {
+        $synthid = [];
+        foreach ($details as $key => $output) {
+            $itemsynth = new ItemSynthesis();
+            $itemsynth->item_id = $id;
+            $itemsynth->item_output = $output['output']['id'];
+            $itemsynth->cost = $output['cost'];
+            $itemsynth->isInput = $output['isInput'];
+            $itemsynth->save();
 
-    //         array_push($synthid, $itemsynth->id);
-    //     }
+            array_push($synthid, $itemsynth->id);
+        }
 
-    //     foreach ($details as $key => $input) {
+        foreach ($details as $key => $input) {
 
-    //         foreach ($input['input']['weapons'] as $weapons) {
-    //             $itemsynth = new ItemSynthesisEquipment();
-    //             $itemsynth->item_syntheses_id = implode('', $synthid);
-    //             $itemsynth->item_id = $weapons['id'];
-    //             $itemsynth->tier = $weapons['tier'];
-    //             $itemsynth->save();
+            foreach ($input['input']['weapons'] as $weapons) {
+                $itemsynth = new ItemSynthesisEquipment();
+                $itemsynth->item_syntheses_id = json_encode($synthid);
+                $itemsynth->item_id = $weapons['id'];
+                $itemsynth->tier = $weapons['tier'];
+                $itemsynth->save();
                 
-    //         }
+            }
 
-    //         foreach ($input['input']['materials'] as $key => $materials) {
-    //             $itemsynth = new ItemSynthesisMaterial();
-    //             $itemsynth->item_syntheses_id = implode('', $synthid);
-    //             $itemsynth->item_id = $materials['id'];
-    //             $itemsynth->quantity = $materials['quantity'];
-    //             $itemsynth->save();
+            foreach ($input['input']['materials'] as $key => $materials) {
+                $itemsynth = new ItemSynthesisMaterial();
+                $itemsynth->item_syntheses_id = json_encode($synthid);
+                $itemsynth->item_id = $materials['id'];
+                $itemsynth->quantity = $materials['quantity'];
+                $itemsynth->save();
                 
-    //         }
-    //     }
-    // }
+            }
+        }
+    }
 
-    // public function addTier($itemid, $details) {
-    //     foreach ($details as $key => $tiers) {
-    //         $itemtier = new ItemTier();
-    //         $itemtier->item_id = $itemid;
-    //         $itemtier->tier_name = $tiers['effect']['BuffName__EN'];
-    //         $itemtier->tier_buff = $tiers['effect']['Dsc__EN'];
-    //         $itemtier->save();
+    public function addTier($itemid, $details) {
+        foreach ($details as $key => $tiers) {
+            $itemtier = new ItemTier();
+            $itemtier->item_id = $itemid;
+            $itemtier->tier_name = $tiers['effect']['BuffName__EN'];
+            $itemtier->tier_buff = $tiers['effect']['Dsc__EN'];
+            $itemtier->save();
 
-    //         foreach ($tiers['material'] as $key => $material) {
-    //             $itemtiermaterial = new ItemTierMaterial();
-    //             $itemtiermaterial->item_tier_id = $itemtier->id;
-    //             $itemtiermaterial->tier_item_id = $material['item']['key_id'];
-    //             $itemtiermaterial->qty = $material['quantity'];
-    //             $itemtiermaterial->save();
-    //         }
-    //     }
-    // }
+            foreach ($tiers['material'] as $key => $material) {
+                $itemtiermaterial = new ItemTierMaterial();
+                $itemtiermaterial->item_tier_id = $itemtier->id;
+                $itemtiermaterial->tier_item_id = $material['item']['key_id'];
+                $itemtiermaterial->qty = $material['quantity'];
+                $itemtiermaterial->save();
+            }
+        }
+    }
 
 
     // // public function getItems($id) {
