@@ -6,6 +6,63 @@ use Illuminate\Database\Eloquent\Model;
 
 class Item extends Model
 {
+    private $equips__ = [
+        'Weapon - Sword', 
+        'Weapon - Dagger',
+        'Weapon - Axe',
+        'Weapon - Book',
+        'Weapon - Bow',
+        'Weapon - Katar',
+        'Weapon - Knuckles',
+        'Weapon - Spear',
+        'Whips',
+        'Weapon - Staff',
+        'Weapon - Mace',
+        'Off-hand - Jewelry',
+        'Off-hand - Bracer',
+        'Off-hand - Bangle',
+        'Musical Instrument',
+        'Garments',
+        'Footgears',
+        'Armors',
+        'Accessory',
+        'Off-hand - Shield',
+        'Costume',
+        'Face'
+    ];
+
+    private $cards__ = [
+        'Accessory card',
+        'Armor card',
+        'Garments card',
+        'Headwear card',
+        'Off-hand card',
+        'Shoe card',
+        'Weapon card',
+        'Accessory card'
+    ];
+
+    private $items__ = [
+        'Blueprint',
+        'Consumables',
+        'Crafting material',
+        "Death's Breath",
+        'Enhance equipment',
+        'Blueprint',
+        'Blueprint',
+        'Fruit',
+        'Holiday material',
+        'Meat',
+        'Mora coin',
+        'Potion / Effect',
+        'Quest triggering item',
+        'Redeem item',
+        'Seafood',
+        'Spice',
+        'Vegetable'
+    ];
+
+
     public function monsters() {
         return $this->belongsToMany('App\Monster')->select('id', 'name_en', 'icon', 'element', 'size', 'race', 'type', 'star');
     }
@@ -38,5 +95,17 @@ class Item extends Model
         $removeArray = explode(', ', $arrays);
         $newArray = array_shift($removeArray);
         return $this->attributes['unlock_effect'] = implode('', $removeArray);
+    }
+
+    public function getTypeNameAttribute($value) {
+        if (in_array($value, $this->equips__)) {
+            return $this->attributes['type_nam'] = 'equips';
+        }
+        if (in_array($value, $this->cards__)) {
+            return $this->attributes['type'] = 'cards';
+        }
+        if (in_array($value, $this->items__)) {
+            return $this->attributes['type'] = 'items';
+        }
     }
 }
