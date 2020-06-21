@@ -98,14 +98,14 @@ class Item extends Model
         return $this->attributes['unlock_effect'] = implode('', $removeArray);
     }
 
-    public function getTypeNameAttribute($value) {
-        if (in_array($value, $this->equips__)) {
-            return $this->attributes['type_nam'] = 'equips';
+    public function getTypeAttribute($value) {
+        if (in_array($this->attributes['type_name'], $this->equips__)) {
+            return $this->attributes['type'] = 'equips';
         }
-        if (in_array($value, $this->cards__)) {
+        if (in_array($this->attributes['type_name'], $this->cards__)) {
             return $this->attributes['type'] = 'cards';
         }
-        if (in_array($value, $this->items__)) {
+        if (in_array($this->attributes['type_name'], $this->items__)) {
             return $this->attributes['type'] = 'items';
         }
     }

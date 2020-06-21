@@ -11,7 +11,7 @@ class Monster extends Model
     }
 
     public function items() {
-        return $this->belongsToMany('App\Item')->withPivot('qty')->select('id', 'icon', 'name_en', 'name_ch', 'type_name');
+        return $this->belongsToMany('App\Item')->withPivot('qty')->select('id', 'icon', 'name_en', 'name_ch', 'type_name', 'type');
     }
 
     public function getIconAttribute($value) {
