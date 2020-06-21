@@ -19,7 +19,7 @@ class Monster extends Model
     }
 
     public function getTypeAttribute($value) {
-        return $this->attributes['type'] = $value != 'Monster' ? strtolower($value) : '';
+        return $this->attributes['type'] = $value != 'Monster' ? strtolower($value) : 'Normal';
     }
 
     public function getStarAttribute($value) {
