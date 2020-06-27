@@ -77,7 +77,7 @@ class Item extends Model
     }
     
     public function getStatAttribute($value) {
-        return $this->attributes['stat_extra'] = json_decode($value, true);
+        return $this->attributes['stat'] = json_decode($value, true);
     }
 
     // public function getCanEquipAttribute($value) {
