@@ -17,6 +17,8 @@ use App\ItemMonster;
 use App\ItemJob;
 use App\ItemCraft;
 use App\MapMonster;
+use App\ItemCompose;
+use App\ItemComposeMaterial;
 
 use Str;
 
@@ -43,8 +45,6 @@ class ItemController extends Controller
         'Armors',
         'Accessory',
         'Off-hand - Shield',
-        
-        
     ];
 
     private $cards__ = [
@@ -84,7 +84,7 @@ class ItemController extends Controller
         'Seafood',
         'Spice',
         'Vegetable',
-        null
+        'Zeny'
     ];
 
     private $jobs__ = [
@@ -218,6 +218,8 @@ class ItemController extends Controller
         $from = Item::where('key_id', $item->compose_id)->select('id', 'icon', 'name_en', 'type_name')->first();
         $item['item_to'] = $to;
         $item['item_from'] = $from;
+        $itemcompose = ItemCompose::where('item_id', $item->id)->with('materials')->get();
+        $item['compose'] = $itemcompose;
         return $item;
     }
 
@@ -240,36 +242,75 @@ class ItemController extends Controller
             }
         }
         $item['jobs'] = $jobs;
+        $itemcompose = ItemCompose::where('item_id', $item->id)->with('materials')->get();
+        $item['compose'] = $itemcompose;
         return $item;
     }
 
-    public function getItemSets() {
-        $items = Item::where('item_set', null)->get();
+    public function getCompose() {
+        try {
+            $items = Item::where('type_name', 'Blueprint')->get();
 
-        foreach ($items as $key => $item) {
-            try {
+            foreach ($items as $key => $item) {
                 $json = file_get_contents('https://www.romcodex.com/api/item/'.$item->key_id);
                 $result = json_decode($json, true);
-                if (array_key_exists("ItemSet", $result)) {
+
+                if (array_key_exists("ComposeRecipe", $result)) {
+                    foreach ($result['ComposeRecipe']['composeTo'] as $key => $compose) {
+                        $itemcompose = new ItemCompose();
+                        $itemcompose->item_id = $item->id;
+                        $itemcompose->is_input = $compose['isInput'];      
+                        $itemcompose->cost = $compose['cost'];
+                        $itemcompose->item_output = $compose['output'][0]['id'];
+                        $itemcompose->save();
     
-                    foreach ($result['ItemSet'] as $set) {
-                        $itemsets = new ItemSet();
-                        $itemsets->item_id = $item->id;
-                        $itemsets->effect_desc = $set['EffectDesc'];
-                        $itemsets->effect_desc_en = $set['EffectDesc__EN'];
-                        $itemsets->equip_suit_desc = $set['EquipSuitDsc'];
-                        $itemsets->equip_suit_desc_en = $set['EquipSuitDsc__EN'];
-                        $itemsets->items = json_encode(array_values($set['Suitid']));
-                        $itemsets->save();
+                        foreach ($compose['input'] as $key => $material) {
+                            $checkitem = Item::where('key_id', $material['id'])->first();
+    
+                            if ($checkitem != null) {
+                                $itemcomposematerial = new ItemComposeMaterial();
+                                $itemcomposematerial->item_compose_id = $itemcompose->id;
+                                $itemcomposematerial->item_id = $material['id'];
+                                $itemcomposematerial->qty = $material['quantity'];
+                                $itemcomposematerial->save();
+                            }
+                        }
                     }
-    
                 }
-    
-            } catch (\Throwable $th) {
-                return $th;
             }
+        } catch (\Throwable $th) {
+            throw $th;
         }
+        
     }
+
+    // public function getItemSets() {
+    //     $items = Item::where('item_set', null)->get();
+
+    //     foreach ($items as $key => $item) {
+    //         try {
+    //             $json = file_get_contents('https://www.romcodex.com/api/item/'.$item->key_id);
+    //             $result = json_decode($json, true);
+    //             if (array_key_exists("ItemSet", $result)) {
+    
+    //                 foreach ($result['ItemSet'] as $set) {
+    //                     $itemsets = new ItemSet();
+    //                     $itemsets->item_id = $item->id;
+    //                     $itemsets->effect_desc = $set['EffectDesc'];
+    //                     $itemsets->effect_desc_en = $set['EffectDesc__EN'];
+    //                     $itemsets->equip_suit_desc = $set['EquipSuitDsc'];
+    //                     $itemsets->equip_suit_desc_en = $set['EquipSuitDsc__EN'];
+    //                     $itemsets->items = json_encode(array_values($set['Suitid']));
+    //                     $itemsets->save();
+    //                 }
+    
+    //             }
+    
+    //         } catch (\Throwable $th) {
+    //             return $th;
+    //         }
+    //     }
+    // }
 
     public function runMissingKeyId() {
         $items = Item::where('type_name', 'Blueprint')->get();
