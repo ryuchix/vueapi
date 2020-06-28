@@ -24,6 +24,8 @@ Route::get('runNull', 'ItemController@runNull');
 Route::get('getBlueprintMissingitem', 'ItemController@getBlueprintMissingitem');
 Route::get('runMissingKeyId', 'ItemController@runMissingKeyId');
 Route::get('getCompose', 'ItemController@getCompose');
+Route::get('getSynth', 'NpcController@getSynth');
+Route::get('addRegularItem', 'NpcController@addRegularItem');
 
 // api
 Route::get('monsters', 'MonsterController@index');

@@ -186,7 +186,9 @@ class ItemController extends Controller
         $equip['sets'] = $equip->item_set == 1 ? $itemsets : null;
         $equip['before'] = $equip->prior_equipment != null ? Item::where('key_id', $equip->prior_equipment)->select('id', 'icon', 'name_en')->first() : null;
         $itemSynth = ItemSynthesis::where('item_id', $equip->id)->first();
-        $equip['after'] = $equip->synthesis_recipe != null ? Item::where('key_id', $itemSynth->item_output)->select('id', 'icon', 'name_en')->first() : null;
+        if($itemSynth != null) {
+            $equip['after'] = $equip->synthesis_recipe != null ? Item::where('key_id', $itemSynth->item_output)->select('id', 'icon', 'name_en')->first() : null;
+        }
         $jobs = [];
         $can_equip = json_decode($equip->can_equip);
         if ($can_equip != null) {
@@ -195,6 +197,13 @@ class ItemController extends Controller
             }
         }
         $equip['jobs'] = $jobs;
+        if ($equip->synthesis_recipe == 1 && $equip->tier_list == 0) {
+            $synth = ItemSynthesis::where('item_id', $equip->id)->with('equipments', 'materials')->get();
+            $equip['synth'] = $synth;
+        } else {
+            $equip['synth'] = null;
+        }
+
 
         return $equip;
     }
