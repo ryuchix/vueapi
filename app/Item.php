@@ -60,7 +60,7 @@ class Item extends Model
         'Seafood',
         'Spice',
         'Vegetable',
-        null
+        'Zeny'
     ];
 
 
@@ -81,7 +81,7 @@ class Item extends Model
     }
 
     // public function getCanEquipAttribute($value) {
-    //     return $this->attributes['can_equip'] = json_decode($value, true);
+    //     return $this->attributes['can_equip'] = is_array($value) ? $value : json_encode($value, true);
     // }
 
     public function getUnlockEffectAttribute($value) {
@@ -96,6 +96,10 @@ class Item extends Model
         $removeArray = explode(', ', $arrays);
         $newArray = array_shift($removeArray);
         return $this->attributes['unlock_effect'] = implode('', $removeArray);
+    }
+
+    public function getStatTypeAttribute($value) {
+        return $this->attributes['stat_type'] = json_decode($value, true);
     }
 
     public function getTypeAttribute($value) {

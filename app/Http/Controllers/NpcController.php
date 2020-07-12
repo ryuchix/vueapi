@@ -274,6 +274,31 @@ class NpcController extends Controller
             throw $th;
         }
     }
+
+    public function modifySynth() {
+        $items = Item::where('id', '>=', '2055')->get();
+        foreach ($items as $key => $value) {
+            $checkItem = Item::where('key_id', $value->key_id)->first();
+
+            if($checkItem != null) {
+                $json = file_get_contents('https://www.romcodex.com/api/item/'.$value->key_id);
+                $result = json_decode($json, true);
+
+                
+
+                if (array_key_exists("AttrData", $result)) {
+                    $item = Item::find($checkItem->id);
+                    $item->stat = json_encode($result['AttrData']['Stat']);
+                    $item->stat_extra = json_encode($result['AttrData']['StatExtra']);
+                    $item->stat_type = json_encode($result['AttrData']['Type']);
+                    $item->can_equip = json_encode($result['AttrData']['CanEquip']);
+                    $item->save();
+                }
+
+            }
+
+        }
+    }
  
     public function getSynth() {
         try {
@@ -306,10 +331,10 @@ class NpcController extends Controller
                     $item->compose_output_id = array_key_exists("ComposeOutputID", $result) ? $result['ComposeOutputID'] : null;
                     $item->compose_id = array_key_exists("ComposeID", $result) ? $result['ComposeID'] : null;
                     if (array_key_exists("AttrData", $result)) {
-                        $item->stat = implode(", ", array_key_exists("Stat", $result['AttrData']) ? $result['AttrData']['Stat'] : []);
-                        $item->stat_extra = implode(", ", array_key_exists("StatExtra", $result['AttrData']) ? $result['AttrData']['StatExtra'] : []);
-                        $item->stat_type = array_key_exists("Type", $result['AttrData']) ? $result['AttrData']['Type'] : '';
-                        $item->can_equip = array_key_exists("CanEquip", $result['AttrData']) ? $result['AttrData']['CanEquip'] : '';
+                        $item->stat = json_encode($result['AttrData']['Stat']);
+                        $item->stat_extra = json_encode($result['AttrData']['StatExtra']);
+                        $item->stat_type = json_encode($result['AttrData']['Type']);
+                        $item->can_equip = json_encode($result['AttrData']['CanEquip']);
                     }
     
                     $item->item_set = array_key_exists("ItemSet", $result);
@@ -437,4 +462,35 @@ class NpcController extends Controller
 
         }
     }
+
+    public function addSlugInItems() {
+        $items = Item::get();
+
+        foreach ($items as $item) {
+            $_item = Item::find($item->id);
+            $_item->slug = Str::slug($item->name_en);
+            $_item->save();
+        }
+    }
+
+    public function renameSlots() {
+        $items = Item::get();
+
+        foreach ($items as $item) {
+            $a = $item->name_en;
+            if (strpos($a, '[1]') !== false) {
+                $item->name_en = preg_replace('/\s+/', ' ',str_replace("[1]"," [1]",$a));
+                $item->save();
+            }
+            if (strpos($a, '[2]') !== false) {
+                $item->name_en = preg_replace('/\s+/', ' ',str_replace("[2]"," [2]",$a));
+                $item->save();
+            }
+        }
+
+        
+
+
+    }
+
 }

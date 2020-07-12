@@ -26,6 +26,9 @@ Route::get('runMissingKeyId', 'ItemController@runMissingKeyId');
 Route::get('getCompose', 'ItemController@getCompose');
 Route::get('getSynth', 'NpcController@getSynth');
 Route::get('addRegularItem', 'NpcController@addRegularItem');
+Route::get('modifySynth', 'NpcController@modifySynth');
+Route::get('addSlugInItems', 'NpcController@addSlugInItems');
+Route::get('renameSlots', 'NpcController@renameSlots');
 
 // api
 Route::get('monsters', 'MonsterController@index');
@@ -43,4 +46,5 @@ Route::get('item/{id}', 'ItemController@getItem');
 Route::get('headwears', 'ItemController@getHeadwears');
 Route::get('headwear/{id}', 'ItemController@getHeadwear');
 
-
+Route::get('blogs', 'BlogController@index');
+Route::get('blog/{slug}', 'BlogController@getBlog');

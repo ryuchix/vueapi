@@ -177,22 +177,24 @@ class ItemController extends Controller
     }
 
     public function getEquipment($id) {
-        $equip = Item::where('id', $id)->whereIn('type_name', $this->equips__)->with('monsters')->firstOrFail();
+        $equip = Item::where('slug', $id)->whereIn('type_name', $this->equips__)->with('monsters')->firstOrFail();
         $equip['slot'] = strpos($equip->name_en,'[1]') !== false || strpos($equip->name_en, '[2]') !== false;
         $equip['tradable'] = $equip->auction_price == 1 ? true : false;
         $itemtiers = ItemTier::where('item_id', $equip->id)->with('materials')->get();
         $equip['tiers'] = $equip->tier_list == 1 ? $itemtiers : null;
         $itemsets = ItemSet::where('item_id', $equip->id)->select('effect_desc_en', 'item_id', 'items', 'equip_suit_desc_en', 'id')->get();
         $equip['sets'] = $equip->item_set == 1 ? $itemsets : null;
-        $equip['before'] = $equip->prior_equipment != null ? Item::where('key_id', $equip->prior_equipment)->select('id', 'icon', 'name_en')->first() : null;
+        $equip['before'] = $equip->prior_equipment != null ? Item::where('key_id', $equip->prior_equipment)->select('id', 'slug', 'icon', 'name_en')->first() : null;
         $itemSynth = ItemSynthesis::where('item_id', $equip->id)->first();
         if($itemSynth != null) {
-            $equip['after'] = $equip->synthesis_recipe != null ? Item::where('key_id', $itemSynth->item_output)->select('id', 'icon', 'name_en')->first() : null;
+            $equip['after'] = $equip->synthesis_recipe != null ? Item::where('key_id', $itemSynth->item_output)->select('id', 'slug', 'icon', 'name_en')->first() : null;
         }
         $jobs = [];
-        $can_equip = json_decode($equip->can_equip);
+        
+        $can_equip = is_array($equip->can_equip) ? $equip->can_equip : json_decode($equip->can_equip, true);
         if ($can_equip != null) {
-            foreach($can_equip as $v) {
+            $anothecheck = is_array($can_equip) ? $can_equip : json_decode($can_equip, true);
+            foreach($anothecheck as $v) {
                 $jobs[] = $this->jobs__[$v];
             }
         }
@@ -221,10 +223,10 @@ class ItemController extends Controller
     }
 
     public function getItem($id) {
-        $item = Item::where('id', $id)->whereIn('type_name', $this->items__)->with('monsters')->firstOrFail();
+        $item = Item::where('slug', $id)->whereIn('type_name', $this->items__)->with('monsters')->firstOrFail();
         $item['tradable'] = $item->auction_price == 1 ? true : false;
-        $to = Item::where('key_id', $item->compose_output_id)->select('id', 'icon', 'name_en', 'type_name')->first();
-        $from = Item::where('key_id', $item->compose_id)->select('id', 'icon', 'name_en', 'type_name')->first();
+        $to = Item::where('key_id', $item->compose_output_id)->select('id', 'slug', 'icon', 'name_en', 'type_name')->first();
+        $from = Item::where('key_id', $item->compose_id)->select('id', 'slug', 'icon', 'name_en', 'type_name')->first();
         $item['item_to'] = $to;
         $item['item_from'] = $from;
         $itemcompose = ItemCompose::where('item_id', $item->id)->with('materials')->get();
@@ -421,10 +423,10 @@ class ItemController extends Controller
                     $item_->compose_output_id = array_key_exists("ComposeOutputID", $result) ? $result['ComposeOutputID'] : null;
                     $item_->compose_id = array_key_exists("ComposeID", $result) ? $result['ComposeID'] : null;
                     if (array_key_exists("AttrData", $result)) {
-                        $item_->stat = implode(", ", array_key_exists("Stat", $result['AttrData']) ? $result['AttrData']['Stat'] : []);
-                        $item_->stat_extra = implode(", ", array_key_exists("StatExtra", $result['AttrData']) ? $result['AttrData']['StatExtra'] : []);
-                        $item_->stat_type = array_key_exists("Type", $result['AttrData']) ? $result['AttrData']['Type'] : '';
-                        $item_->can_equip = array_key_exists("CanEquip", $result['AttrData']) ? $result['AttrData']['CanEquip'] : '';
+                        $item_->stat = json_encode($result['AttrData']['Stat']);
+                        $item_->stat_extra = json_encode($result['AttrData']['StatExtra']);
+                        $item_->stat_type = json_encode($result['AttrData']['Type']);
+                        $item_->can_equip = json_encode($result['AttrData']['CanEquip']);
                     }
     
                     $item_->item_set = array_key_exists("ItemSet", $result);
@@ -475,31 +477,35 @@ class ItemController extends Controller
     //     }
     // }
 
-    // public function addSingleItem() {
-    //     $json = file_get_contents('https://www.romcodex.com/api/item/52821');
-    //     $result = json_decode($json, true);
+    public function addSingleItem() {
+        try {
+            $json = file_get_contents('https://www.romcodex.com/api/item/52515');
+            $result = json_decode($json, true);
+    
+            $checkItem = Item::where('key_id', $result['id'])->first();
+    
+            if ($checkItem == null) {
+                $item = new Item();
+                $item->key_id = $result['key_id'];
+                copy('https://www.romcodex.com/icons/item/'.$result['Icon'].'.png', public_path('/uploads/items/'.Str::slug($result['key_id'], '-').'_img.png'));
+                $item->sell_price = array_key_exists("SellPrice", $result) ? $result['SellPrice'] : null;
+                $item->icon = Str::slug($result['key_id'], '-').'_img.png';
+                $item->desc = array_key_exists("Desc", $result) ? $result['Desc'] : null;
+                $item->desc_en = array_key_exists("Desc__EN", $result) ? $result['Desc__EN'] : null;
+                $item->type = array_key_exists("Type", $result) ? $result['Type'] : null;
+                $item->name_ch = array_key_exists("NameZh", $result) ? $result['NameZh'] : null;
+                $item->name_en = array_key_exists("NameZh__EN", $result) ? $result['NameZh__EN'] : null;
+                $item->auction_price = array_key_exists("AuctionPrice", $result) ? $result['AuctionPrice'] : null;
+                $item->type_name = array_key_exists("TypeName", $result) ? $result['TypeName'] : null;
+                $item->quality = array_key_exists("Quality", $result) ? $result['Quality'] : null;
+                $item->save();
+    
+            }
+        } catch (\Throwable $th) {
+            throw $th;
+        }
 
-    //     $checkItem = Item::where('key_id', $result['id'])->first();
-
-    //     if ($checkItem) {
-    //         $item = new Item();
-    //         $item->key_id = $result['key_id'];
-    //         copy('https://www.romcodex.com/icons/item/'.$result['Icon'].'.png', public_path('/uploads/items/'.Str::slug($result['key_id'], '-').'_img.png'));
-    //         $item->sell_price = array_key_exists("SellPrice", $result) ? $result['SellPrice'] : null;
-    //         $item->icon = Str::slug($result['key_id'], '-').'_img.png';
-    //         $item->desc = array_key_exists("Desc", $result) ? $result['Desc'] : null;
-    //         $item->desc_en = array_key_exists("Desc__EN", $result) ? $result['Desc__EN'] : null;
-    //         $item->type = array_key_exists("Type", $result) ? $result['Type'] : null;
-    //         $item->name_ch = array_key_exists("NameZh", $result) ? $result['NameZh'] : null;
-    //         $item->name_en = array_key_exists("NameZh__EN", $result) ? $result['NameZh__EN'] : null;
-    //         $item->auction_price = array_key_exists("AuctionPrice", $result) ? $result['AuctionPrice'] : null;
-    //         $item->type_name = array_key_exists("TypeName", $result) ? $result['TypeName'] : null;
-    //         $item->quality = array_key_exists("Quality", $result) ? $result['Quality'] : null;
-    //         $item->save();
-
-    //     }
-
-    // }
+    }
 
     // public function getMonsters() {
     //     $json = file_get_contents('https://www.romcodex.com/api/monster');
