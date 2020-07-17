@@ -14,23 +14,23 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('getMonster/{id}', 'ItemController@getMonster');
-Route::get('getMonsters', 'ItemController@getMonsters');
-Route::get('saveMonsterItem', 'MonsterController@saveMonsterItem');
-Route::get('saveExtraStat', 'ItemController@getExtraStat');
-Route::get('addSingleItem', 'ItemController@addSingleItem');
-Route::get('getItemSets', 'ItemController@getItemSets');
-Route::get('runNull', 'ItemController@runNull');
-Route::get('getBlueprintMissingitem', 'ItemController@getBlueprintMissingitem');
-Route::get('runMissingKeyId', 'ItemController@runMissingKeyId');
-Route::get('getCompose', 'ItemController@getCompose');
-Route::get('getSynth', 'NpcController@getSynth');
-Route::get('addRegularItem', 'NpcController@addRegularItem');
-Route::get('modifySynth', 'NpcController@modifySynth');
-Route::get('addSlugInItems', 'NpcController@addSlugInItems');
-Route::get('renameSlots', 'NpcController@renameSlots');
-Route::get('getMissingInfoInHeadwears', 'NpcController@getMissingInfoInHeadwears');
-Route::get('getMissingCardImage', 'NpcController@getMissingCardImage');
+// Route::get('getMonster/{id}', 'ItemController@getMonster');
+// Route::get('getMonsters', 'ItemController@getMonsters');
+// Route::get('saveMonsterItem', 'MonsterController@saveMonsterItem');
+// Route::get('saveExtraStat', 'ItemController@getExtraStat');
+// Route::get('addSingleItem', 'ItemController@addSingleItem');
+// Route::get('getItemSets', 'ItemController@getItemSets');
+// Route::get('runNull', 'ItemController@runNull');
+// Route::get('getBlueprintMissingitem', 'ItemController@getBlueprintMissingitem');
+// Route::get('runMissingKeyId', 'ItemController@runMissingKeyId');
+// Route::get('getCompose', 'ItemController@getCompose');
+// Route::get('getSynth', 'NpcController@getSynth');
+// Route::get('addRegularItem', 'NpcController@addRegularItem');
+// Route::get('modifySynth', 'NpcController@modifySynth');
+// Route::get('addSlugInItems', 'NpcController@addSlugInItems');
+// Route::get('renameSlots', 'NpcController@renameSlots');
+// Route::get('getMissingInfoInHeadwears', 'NpcController@getMissingInfoInHeadwears');
+// Route::get('getMissingCardImage', 'NpcController@getMissingCardImage');
 
 // api
 Route::get('monsters', 'MonsterController@index');
