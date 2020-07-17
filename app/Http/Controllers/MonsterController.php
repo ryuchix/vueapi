@@ -11,13 +11,15 @@ use App\Item;
 class MonsterController extends Controller
 {
     public function index() {
-        $monsters = Monster::paginate();
+        $monsters = Monster::select('id','slug','icon','name_en','level','hp','element','race','size','type')->orderBy('name_en', 'asc')->paginate();
 
         return $monsters;
     }
 
     public function getMonster($id) {
-        $monster =  Monster::where('id', $id)->with('items')->first();
+        $monster =  Monster::where('slug', $id)
+        ->select('id','slug','icon','name_en','level','hp','element','race','size','move_spd','mdef','atk','matk','def','hit','plvl','zone','type','job_exp','flee','base_exp','move_aspd','atk_spd','dex','agi','str','luk','int','vit','desc_en','star','plag')
+        ->with('items')->first();
 
         return $monster;
     }

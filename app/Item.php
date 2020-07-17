@@ -65,7 +65,7 @@ class Item extends Model
 
 
     public function monsters() {
-        return $this->belongsToMany('App\Monster')->select('id', 'name_en', 'icon', 'element', 'size', 'race', 'type', 'star');
+        return $this->belongsToMany('App\Monster')->select('id', 'slug', 'name_en', 'icon', 'element', 'size', 'race', 'type', 'star');
     }
 
     public function getIconAttribute($value) {
@@ -85,21 +85,21 @@ class Item extends Model
     // }
 
     public function getUnlockEffectAttribute($value) {
-        $arrays = substr($value, 10);
-        $removeArray = explode(', ', $arrays);
-        $newArray = array_shift($removeArray);
-        return $this->attributes['unlock_effect'] = implode('', $removeArray);
+        return $this->attributes['unlock_effect'] = json_decode($value, true);
     }
 
     public function getDepositEffectAttribute($value) {
-        $arrays = substr($value, 10);
-        $removeArray = explode(', ', $arrays);
-        $newArray = array_shift($removeArray);
-        return $this->attributes['unlock_effect'] = implode('', $removeArray);
+        return $this->attributes['unlock_effect'] = json_decode($value, true);
     }
 
     public function getStatTypeAttribute($value) {
         return $this->attributes['stat_type'] = json_decode($value, true);
+    }
+
+    public function getQualityAttribute($value) {
+        if (in_array($this->attributes['type_name'], $this->cards__)) {
+            return $this->attributes['quality'] = $value == 1 ? 'white' : ($value == 2 ? 'green' : ($value == 3 ? 'blue' : $value == 4 ? 'violet' : ''));
+        }
     }
 
     public function getTypeAttribute($value) {

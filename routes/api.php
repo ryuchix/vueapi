@@ -29,6 +29,8 @@ Route::get('addRegularItem', 'NpcController@addRegularItem');
 Route::get('modifySynth', 'NpcController@modifySynth');
 Route::get('addSlugInItems', 'NpcController@addSlugInItems');
 Route::get('renameSlots', 'NpcController@renameSlots');
+Route::get('getMissingInfoInHeadwears', 'NpcController@getMissingInfoInHeadwears');
+Route::get('getMissingCardImage', 'NpcController@getMissingCardImage');
 
 // api
 Route::get('monsters', 'MonsterController@index');
@@ -48,3 +50,5 @@ Route::get('headwear/{id}', 'ItemController@getHeadwear');
 
 Route::get('blogs', 'BlogController@index');
 Route::get('blog/{slug}', 'BlogController@getBlog');
+
+Route::get('search/{query}', 'ItemController@search');

@@ -199,6 +199,26 @@ class NpcController extends Controller
         '144069'
     ];
 
+    private $cards__ = [
+        'Accessory card',
+        'Armor card',
+        'Garments card',
+        'Headwear card',
+        'Off-hand card',
+        'Shoe card',
+        'Weapon card',
+        'Accessory card'
+    ];
+
+    private $headwears__ = [
+        'Face',
+        'Costume',
+        'Back',
+        'Headwear',
+        'Mouth',
+        'Tail',
+    ];
+
     public function addRegularItem() {
         try {
             $results = ItemSynthesisMaterial::get();
@@ -463,16 +483,193 @@ class NpcController extends Controller
         }
     }
 
+    public function getMissingCardImage() {
+        $items = Item::whereIn('type_name', $this->cards__)->get();
+
+        foreach ($items as $item) {
+            $_item = Item::where('key_id', $item->key_id)->first();
+
+            try {
+                $json = file_get_contents('https://www.romcodex.com/api/item/'.$item->key_id);
+                $result = json_decode($json, true);
+
+
+                $_item->special = $result['Condition'];
+
+                if (array_key_exists("AttrData", $result)) {
+                    if (array_key_exists("Stat", $result['AttrData'])) {
+                        $_item->stat = json_encode($result['AttrData']['Stat']);
+                    }
+                    if (array_key_exists("StatExtra", $result['AttrData'])) {
+                        $_item->stat_extra = json_encode($result['AttrData']['StatExtra']);
+                    }
+                    if (array_key_exists("CardPicture", $result['AttrData'])) {
+                        $cardIconId = $result['AttrData']['CardPicture'];
+                        copy('https://www.romcodex.com/pic/cards/'.$cardIconId.'.jpg', public_path('/uploads/items/'.Str::slug($_item->name_en, '-').'-img.jpg'));
+                        $_item->icon = Str::slug($_item->name_en, '-').'-img.jpg';
+                    }
+                }
+
+                if (array_key_exists("UnlockEffect", $result)) {
+                    foreach ($result['UnlockEffect'] as $unlock) {
+                        $_item->unlock_effect = json_encode($unlock['Dsc__EN']);
+                    }
+                }
+
+                if (array_key_exists("DepositEffect", $result)) {
+                    foreach ($result['DepositEffect'] as $unlock) {
+                        $_item->deposit_effect = json_encode($unlock['Dsc__EN']);
+                    }
+                }
+
+                if (array_key_exists("ComposeRecipe", $result)) {
+
+                    if ($result['Condition'] == 6) {
+                        foreach ($result['ComposeRecipe']['composeFrom'] as $key => $compose) {
+                            // delete itemcompose record if exists
+                            $_itemcompose = ItemCompose::where('item_id', $item->id)->first();
+                            if ($_itemcompose) {
+                                $_itemcompose->delete();
+    
+                                $_itemcomposematerials = ItemComposeMaterial::where('item_compose_id', $_itemcompose->id)->get();
+                                foreach ($_itemcomposematerials as $icm) {
+                                    $icm->delete();
+                                }
+                            }
+                            
+                            $itemcompose = new ItemCompose();
+                            $itemcompose->item_id = $item->id;
+                            $itemcompose->is_input = $compose['isInput'];      
+                            $itemcompose->cost = $compose['cost'];
+                            $itemcompose->item_output = $result['key_id'];
+                            $itemcompose->save();
+        
+                            foreach ($compose['input'] as $key => $material) {
+                                $checkitem = Item::where('key_id', $material['id'])->first();
+        
+                                $itemcomposematerial = new ItemComposeMaterial();
+                                $itemcomposematerial->item_compose_id = $itemcompose->id;
+                                $itemcomposematerial->item_id = $material['id'];
+                                $itemcomposematerial->qty = $material['quantity'];
+                                $itemcomposematerial->save();
+                            }
+                        }
+                    } else {
+                        foreach ($result['ComposeRecipe']['composeFrom'] as $key => $compose) {
+                            // delete itemcompose record if exists
+                            $_itemcompose = ItemCompose::where('item_id', $item->id)->first();
+                            if ($_itemcompose) {
+                                $_itemcompose->delete();
+    
+                                $_itemcomposematerials = ItemComposeMaterial::where('item_compose_id', $_itemcompose->id)->get();
+                                foreach ($_itemcomposematerials as $icm) {
+                                    $icm->delete();
+                                }
+                            }
+                            
+                            $itemcompose = new ItemCompose();
+                            $itemcompose->item_id = $item->id;
+                            $itemcompose->is_input = $compose['isInput'];      
+                            $itemcompose->cost = $compose['cost'];
+                            $itemcompose->item_output = $compose['output'][0]['id'];
+                            $itemcompose->save();
+        
+                            foreach ($compose['input'] as $key => $material) {
+                                $checkitem = Item::where('key_id', $material['id'])->first();
+    
+                                $itemcomposematerial = new ItemComposeMaterial();
+                                $itemcomposematerial->item_compose_id = $itemcompose->id;
+                                $itemcomposematerial->item_id = $material['id'];
+                                $itemcomposematerial->qty = $material['quantity'];
+                                $itemcomposematerial->save();
+              
+                            }
+                        }
+                    }
+                }
+
+                $_item->save();
+
+            } catch (\Throwable $th) {
+                throw $th;
+            }
+        }
+    }
+
+    public function getMissingInfoInHeadwears() {
+        $items = Item::whereIn('type_name', $this->headwears__)->get();
+
+        foreach ($items as $item) {
+            $_item = Item::where('key_id', $item->key_id)->first();
+
+            try {
+                $json = file_get_contents('https://www.romcodex.com/api/item/'.$item->key_id);
+                $result = json_decode($json, true);
+
+                if (array_key_exists("AttrData", $result)) {
+                    if (array_key_exists("Stat", $result['AttrData'])) {
+                        $_item->stat = json_encode($result['AttrData']['Stat']);
+                    }
+                    if (array_key_exists("StatExtra", $result['AttrData'])) {
+                        $_item->stat_extra = json_encode($result['AttrData']['StatExtra']);
+                    }
+                }
+
+                if (array_key_exists("UnlockEffect", $result)) {
+                    foreach ($result['UnlockEffect'] as $unlock) {
+                        $_item->unlock_effect = json_encode($unlock['Dsc__EN']);
+                    }
+                }
+
+                if (array_key_exists("DepositEffect", $result)) {
+                    foreach ($result['DepositEffect'] as $unlock) {
+                        $_item->deposit_effect = json_encode($unlock['Dsc__EN']);
+                    }
+                }
+
+                if (array_key_exists("ComposeRecipe", $result)) {
+                    foreach ($result['ComposeRecipe']['composeTo'] as $key => $compose) {
+                        $itemcompose = new ItemCompose();
+                        $itemcompose->item_id = $item->id;
+                        $itemcompose->is_input = $compose['isInput'];      
+                        $itemcompose->cost = $compose['cost'];
+                        $itemcompose->item_output = $compose['output'][0]['id'];
+                        $itemcompose->save();
+    
+                        foreach ($compose['input'] as $key => $material) {
+                            $checkitem = Item::where('key_id', $material['id'])->first();
+    
+                            if ($checkitem != null) {
+                                $itemcomposematerial = new ItemComposeMaterial();
+                                $itemcomposematerial->item_compose_id = $itemcompose->id;
+                                $itemcomposematerial->item_id = $material['id'];
+                                $itemcomposematerial->qty = $material['quantity'];
+                                $itemcomposematerial->save();
+                            }
+                        }
+                    }
+                }
+
+                $_item->save();
+
+            } catch (\Throwable $th) {
+                throw $th;
+            }
+
+            
+        }
+    }
+
     public function addSlugInItems() {
         $items = Item::get();
 
         foreach ($items as $item) {
             $_item = Item::find($item->id);
-            $_item->slug = Str::slug($item->name_en);
+            $_item->slug = $this->createSlug($item->name_en);
             $_item->save();
         }
     }
-
+    
     public function renameSlots() {
         $items = Item::get();
 
@@ -487,10 +684,40 @@ class NpcController extends Controller
                 $item->save();
             }
         }
-
-        
-
-
     }
+
+    public function createSlug($title, $id = 0)
+    {
+        // Normalize the title
+        $slug = Str::slug($title);
+
+        // Get any that could possibly be related.
+        // This cuts the queries down by doing it once.
+        $allSlugs = $this->getRelatedSlugs($slug, $id);
+
+        // If we haven't used it before then we are all good.
+        if (! $allSlugs->contains('slug', $slug)){
+            return $slug;
+        }
+
+        // Just append numbers like a savage until we find not used.
+        for ($i = 1; $i <= 10; $i++) {
+            $newSlug = $slug.'-'.$i;
+            if (! $allSlugs->contains('slug', $newSlug)) {
+                return $newSlug;
+            }
+        }
+
+        throw new \Exception('Can not create a unique slug');
+    }
+
+    protected function getRelatedSlugs($slug, $id = 0)
+    {
+        return Item::select('slug')->where('slug', 'like', $slug.'%')
+            ->where('id', '<>', $id)
+            ->get();
+    }
+
+
 
 }

@@ -19,6 +19,7 @@ use App\ItemCraft;
 use App\MapMonster;
 use App\ItemCompose;
 use App\ItemComposeMaterial;
+use App\Blog;
 
 use Str;
 
@@ -173,7 +174,7 @@ class ItemController extends Controller
     ];
 
     public function equipments() {
-        return Item::whereIn('type_name', $this->equips__)->orderBy('name_en')->paginate();
+        return Item::whereIn('type_name', $this->equips__)->where('quality', '!=', 1)->orderBy('name_en')->paginate();
     }
 
     public function getEquipment($id) {
@@ -211,11 +212,15 @@ class ItemController extends Controller
     }
 
     public function cards() {
-        return Item::whereIn('type_name', $this->cards__)->orderBy('name_en')->paginate();
+        return Item::whereIn('type_name', $this->cards__)->select('id', 'slug', 'quality', 'name_en', 'icon', 'type_name', 'type', 'stat', 'unlock_effect', 'deposit_effect')->orderBy('name_en')->paginate();
     }
 
     public function getCard($id) {
-        return Item::where('id', $id)->whereIn('type_name', $this->cards__)->firstOrFail();
+        $item = Item::where('slug', $id)->whereIn('type_name', $this->cards__)->with('monsters:id,slug,icon,name_en,race,element,size,type,star')->firstOrFail();
+        $item['tradable'] = $item->auction_price == 1 ? true : false;
+        $itemcompose = ItemCompose::where('item_id', $item->id)->with('materials')->get();
+        $item['compose'] = $itemcompose;
+        return $item;
     }
 
     public function getItems() {
@@ -239,9 +244,9 @@ class ItemController extends Controller
     }
 
     public function getHeadwear($id) {
-        $item = Item::where('id', $id)->whereIn('type_name', $this->headwears__)->firstOrFail();
-        $to = Item::where('key_id', $item->compose_output_id)->select('id', 'icon', 'name_en', 'type_name')->first();
-        $from = Item::where('key_id', $item->compose_id)->select('id', 'icon', 'name_en', 'type_name', 'stat', 'stat_extra')->first();
+        $item = Item::where('slug', $id)->whereIn('type_name', $this->headwears__)->firstOrFail();
+        $to = Item::where('key_id', $item->compose_output_id)->select('id', 'slug', 'icon', 'name_en', 'type_name')->first();
+        $from = Item::where('key_id', $item->compose_id)->select('id', 'slug', 'icon', 'name_en', 'type_name', 'stat', 'stat_extra')->first();
         $item['tradable'] = $item->auction_price == 1 ? true : false;
         $item['item_to'] = $to;
         $item['item_from'] = $from;
@@ -256,6 +261,26 @@ class ItemController extends Controller
         $itemcompose = ItemCompose::where('item_id', $item->id)->with('materials')->get();
         $item['compose'] = $itemcompose;
         return $item;
+    }
+
+    public function search($query) {
+        $monsters = Monster::where('name_en', 'LIKE', "%$query%")->orderBy('name_en', 'asc')->get();
+        $equipments = Item::whereIn('type_name', $this->equips__)->where('name_en', 'LIKE', "%$query%")->orderBy('name_en')->get();
+        $items = Item::whereIn('type_name', $this->items__)->where('name_en', 'LIKE', "%$query%")->orderBy('name_en')->get();
+        $cards = Item::whereIn('type_name', $this->cards__)->where('name_en', 'LIKE', "%$query%")->orderBy('name_en')->get();
+        $headwears = Item::whereIn('type_name', $this->headwears__)->where('name_en', 'LIKE', "%$query%")->orderBy('name_en')->get();
+        $blogs = Blog::orWhere('title', 'LIKE', "%$query%")
+                        ->orWhere('content', 'LIKE', "%$query%")
+                        ->orWhere('excerpt', 'LIKE', "%$query%")
+                        ->orderBy('created_at', 'desc')->get();
+
+        return response()->json([
+            'monsters' => $monsters, 
+            'equipments' => $equipments, 
+            'items' => $items, 
+            'cards' => $cards, 
+            'headwears' => $headwears, 
+            'blogs' => $blogs,  ]);
     }
 
     public function getCompose() {

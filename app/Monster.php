@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
+
 class Monster extends Model
 {
     public function maps() {
@@ -11,7 +12,7 @@ class Monster extends Model
     }
 
     public function items() {
-        return $this->belongsToMany('App\Item')->withPivot('qty')->select('id', 'icon', 'name_en', 'name_ch', 'type_name', 'type');
+        return $this->belongsToMany('App\Item')->withPivot('qty')->select('id', 'slug', 'icon', 'name_en', 'name_ch', 'type_name', 'type');
     }
 
     public function getIconAttribute($value) {
@@ -19,11 +20,13 @@ class Monster extends Model
     }
 
     public function getTypeAttribute($value) {
-        return $this->attributes['type'] = $value != 'Monster' ? strtolower($value) : 'Normal';
-    }
+        
+        $mons = Monster::where('id', $this->attributes['id'])->first();
+        $isUndead = $value == 'MVP' && $mons->key_id >= 204000;
 
-    public function getStarAttribute($value) {
-        return $this->attributes['type'] = $value == 1 ? 'star' : '';
+        $query = $isUndead ? 'undead' : ($value == 'Monster' && $mons->star != 1 ? 'Normal' : ($value == 'MVP' ? 'mvp' : ($value == 'MINI' ? 'mini' : ($mons->star == 1 ? 'star' : ''))));
+
+        return $this->attributes['type'] = $query;
     }
 
     public function getSizeAttribute($value) {

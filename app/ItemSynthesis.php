@@ -17,7 +17,7 @@ class ItemSynthesis extends Model
     }
 
     public function getItemOutputAttribute($value) {
-        $item = Item::where('key_id', $value)->select('id', 'name_en', 'icon', 'type', 'type_name')->first();
+        $item = Item::where('key_id', $value)->select('id', 'slug', 'name_en', 'icon', 'type', 'type_name')->first();
         return $this->attributes['item_id'] = $item;
     }
 }
