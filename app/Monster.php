@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Monster extends Model
 {
+    protected $hidden = ['key_id', 'created_at', 'updated_at'];
+
     public function maps() {
         return $this->belongsToMany('App\Map');
     }

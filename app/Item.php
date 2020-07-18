@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Item extends Model
 {
+    protected $hidden = ['key_id', 'created_at', 'updated_at'];
+
     private $equips__ = [
         'Weapon - Sword', 
         'Weapon - Dagger',
@@ -63,6 +65,15 @@ class Item extends Model
         'Zeny'
     ];
 
+    private $headwears__ = [
+        'Face',
+        'Costume',
+        'Back',
+        'Headwear',
+        'Mouth',
+        'Tail',
+    ];
+
 
     public function monsters() {
         return $this->belongsToMany('App\Monster')->select('id', 'slug', 'name_en', 'icon', 'element', 'size', 'race', 'type', 'star');
@@ -111,6 +122,9 @@ class Item extends Model
         }
         if (in_array($this->attributes['type_name'], $this->items__)) {
             return $this->attributes['type'] = 'items';
+        }
+        if (in_array($this->attributes['type_name'], $this->headwears__)) {
+            return $this->attributes['type'] = 'headwears';
         }
     }
 }
