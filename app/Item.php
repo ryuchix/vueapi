@@ -51,7 +51,6 @@ class Item extends Model
         "Death's Breath",
         'Enhance equipment',
         'Blueprint',
-        'Blueprint',
         'Fruit',
         'Holiday material',
         'Meat',
@@ -100,7 +99,7 @@ class Item extends Model
     }
 
     public function getDepositEffectAttribute($value) {
-        return $this->attributes['unlock_effect'] = json_decode($value, true);
+        return $this->attributes['deposit_effect'] = json_decode($value, true);
     }
 
     public function getStatTypeAttribute($value) {
@@ -113,18 +112,33 @@ class Item extends Model
         }
     }
 
+    // public function getTypeNameAttribute($value) {
+    //     if (in_array($this->attributes['type_name'], $this->equips__)) {
+    //         return $this->attributes['type'] = 'equips';
+    //     }
+    //     if (in_array($this->attributes['type_name'], $this->cards__)) {
+    //         return $this->attributes['type'] = 'cards';
+    //     }
+    //     if (in_array($this->attributes['type_name'], $this->items__)) {
+    //         return $this->attributes['type'] = 'items';
+    //     }
+    //     if (in_array($this->attributes['type_name'], $this->headwears__)) {
+    //         return $this->attributes['type'] = 'headwears';
+    //     }
+    // }
+
     public function getTypeAttribute($value) {
-        if (in_array($this->attributes['type_name'], $this->equips__)) {
+        $item = Item::find($this->attributes['id']);
+        if (in_array($item->type_name, $this->equips__)) {
             return $this->attributes['type'] = 'equips';
-        }
-        if (in_array($this->attributes['type_name'], $this->cards__)) {
+        } elseif (in_array($item->type_name, $this->cards__)) {
             return $this->attributes['type'] = 'cards';
-        }
-        if (in_array($this->attributes['type_name'], $this->items__)) {
+        } elseif (in_array($item->type_name, $this->items__)) {
             return $this->attributes['type'] = 'items';
-        }
-        if (in_array($this->attributes['type_name'], $this->headwears__)) {
+        } elseif (in_array($item->type_name, $this->headwears__)) {
             return $this->attributes['type'] = 'headwears';
+        } else {
+            return $this->attributes['type'] = null;
         }
     }
 }
