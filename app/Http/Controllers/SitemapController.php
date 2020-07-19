@@ -104,7 +104,7 @@ class SitemapController extends Controller
             'headwear' => $headwear,
             'item' => $item,
             'equipment' => $equipment,
-        ]);
+        ])->header('Content-Type', 'text/xml');
 	}
 
 	public function blogs()
