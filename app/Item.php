@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Item extends Model
 {
-    protected $hidden = ['key_id', 'created_at', 'updated_at'];
+    protected $hidden = ['key_id', 'created_at'];
 
     private $equips__ = [
         'Weapon - Sword', 
