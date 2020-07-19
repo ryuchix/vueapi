@@ -39,6 +39,12 @@ use Illuminate\Support\Facades\Route;
 
 // sitemaps
 Route::get('/sitemap', 'SitemapController@index');
+Route::get('/sitemap/monsters', 'SitemapController@monsters');
+Route::get('/sitemap/cards', 'SitemapController@cards');
+Route::get('/sitemap/equipments', 'SitemapController@equipments');
+Route::get('/sitemap/items', 'SitemapController@items');
+Route::get('/sitemap/posts', 'SitemapController@blogs');
+Route::get('/sitemap/headwears', 'SitemapController@headwears');
 
 Route::get('monsters', 'MonsterController@index');
 Route::get('monster/{id}', 'MonsterController@getMonster');

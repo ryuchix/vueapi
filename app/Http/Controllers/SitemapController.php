@@ -107,6 +107,22 @@ class SitemapController extends Controller
         ]);
 	}
 
+	public function equipments() {
+        $equipments = Item::whereIn('type_name', $this->equips__)->orderBy('updated_at', 'desc')->select('id','slug','updated_at')->get();
+
+        return response()->json([
+            'equipments' => $equipments,
+        ]);
+	}
+
+	public function headwears() {
+        $headwears = Item::whereIn('type_name', $this->headwears__)->orderBy('updated_at', 'desc')->select('id','slug','updated_at')->get();
+
+        return response()->json([
+            'headwears' => $headwears,
+        ]);
+	}
+
 	public function blogs() {
 	    $posts = Blog::orderBy('updated_at', 'desc')->select('id', 'slug','updated_at')->get();
 
@@ -115,65 +131,28 @@ class SitemapController extends Controller
         ]);
 	}
 
-	public function cards()
-	{
-	    $cards = Card::all();
-	    return response()->view('sitemap.cards', [
-	        'cards' => $cards,
-	    ])->header('Content-Type', 'text/xml');
+	public function cards() {
+        $cards = Item::whereIn('type_name', $this->cards__)->orderBy('updated_at', 'desc')->select('id','slug','updated_at')->get();
+
+        return response()->json([
+            'cards' => $cards,
+        ]);
 	}
 
-	public function monsters()
-	{
-	    $monsters = Monster::all();
-	    return response()->view('sitemap.monsters', [
-	        'monsters' => $monsters,
-	    ])->header('Content-Type', 'text/xml');
+	public function monsters(){
+        $monsters = Monster::orderBy('updated_at', 'desc')->select('id','slug','updated_at')->get();
+
+        return response()->json([
+            'monsters' => $monsters,
+        ]);
 	}
 
-	public function items()
-	{
-	    $items = Item::all();
-	    return response()->view('sitemap.items', [
-	        'items' => $items,
-	    ])->header('Content-Type', 'text/xml');
+	public function items() {
+        $items = Item::whereIn('type_name', $this->items__)->orderBy('updated_at', 'desc')->select('id','slug','updated_at')->get();
+
+        return response()->json([
+            'items' => $items,
+        ]);
 	}
 
-	public function guides()
-	{
-	    $guides = Blog::where('category', 'Guide')->get();
-	    return response()->view('sitemap.guides', [
-	        'guides' => $guides,
-	    ])->header('Content-Type', 'text/xml');
-	}
-
-	public function quests()
-	{
-	    $quests = Blog::where('category', 'Quest')->get();
-	    return response()->view('sitemap.quests', [
-	        'quests' => $quests,
-	    ])->header('Content-Type', 'text/xml');
-	}
-	
-	public function maps()
-	{
-	    $maps = Map::all();
-	    return response()->view('sitemap.maps', [
-	        'maps' => $maps,
-	    ])->header('Content-Type', 'text/xml');
-	}
-
-	public function news()
-	{
-	    $items = Blog::orderBy('updated_at', 'desc')->get();
-
-	    return response()->view('sitemap.news', [
-	        'items' => $items,
-	    ])->header('Content-Type', 'text/xml');
-	}
-
-	public function pages()
-	{
-	    return response()->view('sitemap.page')->header('Content-Type', 'text/xml');
-	}
 }
