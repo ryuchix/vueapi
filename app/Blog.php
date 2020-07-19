@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Blog extends Model
 {
@@ -12,5 +13,10 @@ class Blog extends Model
 
     public function getExcerptAttribute($value) {
         return $this->attributes['excerpt'] = str_replace(array("\n", "\t", "\r"), '', strip_tags($value));
+    }
+
+    public function getUpdatedAtAttribute($value) {
+        $dt = date_create($value);
+        return $this->attributes['updated_at'] = date_format($dt, 'Y-m-d\TH:i:s.P');
     }
 }

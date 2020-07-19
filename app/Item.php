@@ -89,6 +89,11 @@ class Item extends Model
         return $this->attributes['stat'] = json_decode($value, true);
     }
 
+    public function getUpdatedAtAttribute($value) {
+        $dt = date_create($value);
+        return $this->attributes['updated_at'] = date_format($dt, 'Y-m-d\TH:i:s.P');
+    }
+
     // public function getCanEquipAttribute($value) {
     //     return $this->attributes['can_equip'] = is_array($value) ? $value : json_encode($value, true);
     // }

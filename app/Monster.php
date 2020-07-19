@@ -34,4 +34,9 @@ class Monster extends Model
     public function getSizeAttribute($value) {
         return $this->attributes['size'] = $value == 'L' ? 'Large' : ($value == 'M' ? 'Medium' : ($value == 'S' ? 'Small' : ''));
     }
+
+    public function getUpdatedAtAttribute($value) {
+        $dt = date_create($value);
+        return $this->attributes['updated_at'] = date_format($dt, 'Y-m-d\TH:i:s.P');
+    }
 }
