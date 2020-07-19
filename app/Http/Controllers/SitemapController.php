@@ -107,13 +107,12 @@ class SitemapController extends Controller
         ]);
 	}
 
-	public function blogs()
-	{
-	    $posts = Blog::orderBy('updated_at', 'desc')->get();
+	public function blogs() {
+	    $posts = Blog::orderBy('updated_at', 'desc')->select('id', 'slug','updated_at')->get();
 
-	    return response()->view('sitemap.posts', [
-	        'posts' => $posts,
-	    ])->header('Content-Type', 'text/xml');
+        return response()->json([
+            'posts' => $posts,
+        ]);
 	}
 
 	public function cards()
