@@ -17,6 +17,6 @@ class Blog extends Model
 
     public function getUpdatedAtAttribute($value) {
         $dt = date_create($value);
-        return $this->attributes['updated_at'] = date_format($dt, 'Y-m-d\TH:i:sP');
+        return $this->attributes['updated_at'] = date_format($dt, 'Y-m-d');
     }
 }
