@@ -98,12 +98,12 @@ class SitemapController extends Controller
         $monster = Monster::orderBy('updated_at', 'desc')->select('id','updated_at')->first();
       
         return response()->json([
-            'post' => $post,
-            'card' => $card,
-            'monster' => $monster,
-            'headwear' => $headwear,
-            'item' => $item,
-            'equipment' => $equipment,
+            'posts' => $post,
+            'cards' => $card,
+            'monsters' => $monster,
+            'headwears' => $headwear,
+            'items' => $item,
+            'equipments' => $equipment,
         ]);
 	}
 
