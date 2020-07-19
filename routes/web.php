@@ -21,6 +21,10 @@ Route::get('/headwear', function () {
     return view('headwear')->with(['item' => '']);
 });
 
+Route::get('/card', function () {
+    return view('card')->with(['item' => '']);
+});
+
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');

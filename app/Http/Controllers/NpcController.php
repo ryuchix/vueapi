@@ -63,11 +63,164 @@ class NpcController extends Controller
         'Tail',
     ];
 
+    public function getCards(Request $request) {
+        if ($request->has('url')) {
+            $url = $request->input('url');
+            $removedString = str_replace('https://www.romcodex.com/item/', '', $url);
+            $id = strstr($removedString, '/', true);
+        } else {
+            exit;
+        }
+
+
+
+        try {
+            $json = file_get_contents('https://www.romcodex.com/api/item/'.$id);
+            $result = json_decode($json, true);
+
+            $checkItem = Item::where('key_id', $result['key_id'])->first();
+            
+            if ($checkItem == null) {
+                $item = new Item();
+                $item->special = array_key_exists("Condition", $result) ? $result['Condition'] : null;
+                $item->key_id = $result['key_id'];
+                $item->slug = $this->createSlug($result['NameZh__EN']);
+                $item->sell_price = array_key_exists("SellPrice", $result) ? $result['SellPrice'] : null;
+                $item->icon = Str::slug($result['NameZh__EN'].'-'.$result['TypeName'], '-').'-img.jpg';
+                $item->desc = array_key_exists("Desc", $result) ? $result['Desc'] : null;
+                $item->desc_en = array_key_exists("Desc__EN", $result) ? $result['Desc__EN'] : null;
+                $item->type = array_key_exists("Type", $result) ? $result['Type'] : null;
+                $item->name_ch = array_key_exists("NameZh", $result) ? $result['NameZh'] : null;
+                $item->name_en = array_key_exists("NameZh__EN", $result) ? $result['NameZh__EN'] : null;
+                $item->auction_price = array_key_exists("AuctionPrice", $result) ? $result['AuctionPrice'] : null;
+                $item->type_name = array_key_exists("TypeName", $result) ? $result['TypeName'] : null;
+                $item->compose_output_id = array_key_exists("ComposeOutputID", $result) ? $result['ComposeOutputID'] : null;
+                $item->compose_id = array_key_exists("ComposeID", $result) ? $result['ComposeID'] : null;
+                $item->compose_recipe = array_key_exists("ComposeRecipe", $result);
+                $item->quality = array_key_exists("Quality", $result) ? $result['Quality'] : null;
+
+                if (array_key_exists("AttrData", $result)) {
+                    if (array_key_exists("Stat", $result['AttrData'])) {
+                        $item->stat = json_encode($result['AttrData']['Stat']);
+                    }
+                    if (array_key_exists("StatExtra", $result['AttrData'])) {
+                        $item->stat_extra = json_encode($result['AttrData']['StatExtra']);
+                    }
+                    if (array_key_exists("CardPicture", $result['AttrData'])) {
+                        $cardIconId = $result['AttrData']['CardPicture'];
+                        $getImage = copy('https://www.romcodex.com/pic/cards/'.$cardIconId.'.jpg', public_path('/uploads/items/'.Str::slug($result['NameZh__EN'].'-'.$result['TypeName'], '-').'-img.jpg'));
+                        
+                        if (!$getImage) {
+                            copy('https://www.romcodex.com/pic/cards/'.$cardIconId.'.png', public_path('/uploads/items/'.Str::slug($result['NameZh__EN'].'-'.$result['TypeName'], '-').'-img.jpg'));
+                        }
+                        
+                        $item->icon = Str::slug($result['NameZh__EN'].'-'.$result['TypeName'], '-').'-img.jpg';
+                    }
+                }
+    
+                if (array_key_exists("UnlockEffect", $result)) {
+                    foreach ($result['UnlockEffect'] as $unlock) {
+                        $item->unlock_effect = json_encode($unlock['Dsc__EN']);
+                    }
+                }
+    
+                if (array_key_exists("DepositEffect", $result)) {
+                    foreach ($result['DepositEffect'] as $unlock) {
+                        $item->deposit_effect = json_encode($unlock['Dsc__EN']);
+                    }
+                }
+
+                $item->save();
+
+                if (array_key_exists("ComposeRecipe", $result)) {
+
+                    if ($result['Condition'] == 6) {
+                        foreach ($result['ComposeRecipe']['composeFrom'] as $key => $compose) {
+                            // delete itemcompose record if exists
+                            $_itemcompose = ItemCompose::where('item_id', $item->id)->first();
+                            if ($_itemcompose) {
+                                $_itemcompose->delete();
+    
+                                $_itemcomposematerials = ItemComposeMaterial::where('item_compose_id', $_itemcompose->id)->get();
+                                foreach ($_itemcomposematerials as $icm) {
+                                    $icm->delete();
+                                }
+                            }
+                            
+                            $itemcompose = new ItemCompose();
+                            $itemcompose->item_id = $item->id;
+                            $itemcompose->is_input = $compose['isInput'];      
+                            $itemcompose->cost = $compose['cost'];
+                            $itemcompose->item_output = $result['key_id'];
+                            $itemcompose->save();
+        
+                            foreach ($compose['input'] as $key => $material) {
+                                $checkitem = Item::where('key_id', $material['id'])->first();
+        
+                                $itemcomposematerial = new ItemComposeMaterial();
+                                $itemcomposematerial->item_compose_id = $itemcompose->id;
+                                $itemcomposematerial->item_id = $material['id'];
+                                $itemcomposematerial->qty = $material['quantity'];
+                                $itemcomposematerial->save();
+
+                                if ($checkitem == null) {
+                                    $this->getHeadwearss($material['id']);
+                                }
+                            }
+                        }
+                    } else {
+                        foreach ($result['ComposeRecipe']['composeFrom'] as $key => $compose) {
+                            // delete itemcompose record if exists
+                            $_itemcompose = ItemCompose::where('item_id', $item->id)->first();
+                            if ($_itemcompose) {
+                                $_itemcompose->delete();
+    
+                                $_itemcomposematerials = ItemComposeMaterial::where('item_compose_id', $_itemcompose->id)->get();
+                                foreach ($_itemcomposematerials as $icm) {
+                                    $icm->delete();
+                                }
+                            }
+                            
+                            $itemcompose = new ItemCompose();
+                            $itemcompose->item_id = $item->id;
+                            $itemcompose->is_input = $compose['isInput'];      
+                            $itemcompose->cost = $compose['cost'];
+                            $itemcompose->item_output = $compose['output'][0]['id'];
+                            $itemcompose->save();
+        
+                            foreach ($compose['input'] as $key => $material) {
+                                $checkitem = Item::where('key_id', $material['id'])->first();
+    
+                                $itemcomposematerial = new ItemComposeMaterial();
+                                $itemcomposematerial->item_compose_id = $itemcompose->id;
+                                $itemcomposematerial->item_id = $material['id'];
+                                $itemcomposematerial->qty = $material['quantity'];
+                                $itemcomposematerial->save();
+
+                                if ($checkitem == null) {
+                                    $this->getHeadwearss($material['id']);
+                                }
+              
+                            }
+                        }
+                    }
+                }
+    
+                $item->save();
+
+                return view('card')->with(['item' => $item->name_en]);
+
+            } else {
+                return view('card')->with(['item' => 'exists']);
+            }
+
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+
+    }
+
     public function getHeadwears(Request $request) { 
-
-
-
-
 
         if ($request->has('url')) {
             $id = $request->input('url');
@@ -90,6 +243,7 @@ class NpcController extends Controller
                 
                 $item = new Item();
                 $item->key_id = $result['key_id'];
+                $item->special = array_key_exists("Condition", $result) ? $result['Condition'] : null;
                 $item->slug = $this->createSlug($result['NameZh__EN']);
                 $item->sell_price = array_key_exists("SellPrice", $result) ? $result['SellPrice'] : null;
                 $item->icon = Str::slug($result['NameZh__EN'].'-'.$result['TypeName'], '-').'-img.jpg';
@@ -647,7 +801,7 @@ class NpcController extends Controller
     }
 
     public function getMissingCardImage() {
-        $items = Item::whereIn('type_name', $this->cards__)->get();
+        $items = Item::whereIn('type_name', $this->cards__)->where('id', '>=', 3565)->get();
 
         foreach ($items as $item) {
             $_item = Item::where('key_id', $item->key_id)->first();
@@ -660,95 +814,13 @@ class NpcController extends Controller
                 $_item->special = $result['Condition'];
 
                 if (array_key_exists("AttrData", $result)) {
-                    if (array_key_exists("Stat", $result['AttrData'])) {
-                        $_item->stat = json_encode($result['AttrData']['Stat']);
-                    }
-                    if (array_key_exists("StatExtra", $result['AttrData'])) {
-                        $_item->stat_extra = json_encode($result['AttrData']['StatExtra']);
-                    }
+            
                     if (array_key_exists("CardPicture", $result['AttrData'])) {
                         $cardIconId = $result['AttrData']['CardPicture'];
                         copy('https://www.romcodex.com/pic/cards/'.$cardIconId.'.jpg', public_path('/uploads/items/'.Str::slug($_item->name_en, '-').'-img.jpg'));
                         $_item->icon = Str::slug($_item->name_en, '-').'-img.jpg';
                     }
-                }
 
-                if (array_key_exists("UnlockEffect", $result)) {
-                    foreach ($result['UnlockEffect'] as $unlock) {
-                        $_item->unlock_effect = json_encode($unlock['Dsc__EN']);
-                    }
-                }
-
-                if (array_key_exists("DepositEffect", $result)) {
-                    foreach ($result['DepositEffect'] as $unlock) {
-                        $_item->deposit_effect = json_encode($unlock['Dsc__EN']);
-                    }
-                }
-
-                if (array_key_exists("ComposeRecipe", $result)) {
-
-                    if ($result['Condition'] == 6) {
-                        foreach ($result['ComposeRecipe']['composeFrom'] as $key => $compose) {
-                            // delete itemcompose record if exists
-                            $_itemcompose = ItemCompose::where('item_id', $item->id)->first();
-                            if ($_itemcompose) {
-                                $_itemcompose->delete();
-    
-                                $_itemcomposematerials = ItemComposeMaterial::where('item_compose_id', $_itemcompose->id)->get();
-                                foreach ($_itemcomposematerials as $icm) {
-                                    $icm->delete();
-                                }
-                            }
-                            
-                            $itemcompose = new ItemCompose();
-                            $itemcompose->item_id = $item->id;
-                            $itemcompose->is_input = $compose['isInput'];      
-                            $itemcompose->cost = $compose['cost'];
-                            $itemcompose->item_output = $result['key_id'];
-                            $itemcompose->save();
-        
-                            foreach ($compose['input'] as $key => $material) {
-                                $checkitem = Item::where('key_id', $material['id'])->first();
-        
-                                $itemcomposematerial = new ItemComposeMaterial();
-                                $itemcomposematerial->item_compose_id = $itemcompose->id;
-                                $itemcomposematerial->item_id = $material['id'];
-                                $itemcomposematerial->qty = $material['quantity'];
-                                $itemcomposematerial->save();
-                            }
-                        }
-                    } else {
-                        foreach ($result['ComposeRecipe']['composeFrom'] as $key => $compose) {
-                            // delete itemcompose record if exists
-                            $_itemcompose = ItemCompose::where('item_id', $item->id)->first();
-                            if ($_itemcompose) {
-                                $_itemcompose->delete();
-    
-                                $_itemcomposematerials = ItemComposeMaterial::where('item_compose_id', $_itemcompose->id)->get();
-                                foreach ($_itemcomposematerials as $icm) {
-                                    $icm->delete();
-                                }
-                            }
-                            
-                            $itemcompose = new ItemCompose();
-                            $itemcompose->item_id = $item->id;
-                            $itemcompose->is_input = $compose['isInput'];      
-                            $itemcompose->cost = $compose['cost'];
-                            $itemcompose->item_output = $compose['output'][0]['id'];
-                            $itemcompose->save();
-        
-                            foreach ($compose['input'] as $key => $material) {
-                                $checkitem = Item::where('key_id', $material['id'])->first();
-    
-                                $itemcomposematerial = new ItemComposeMaterial();
-                                $itemcomposematerial->item_compose_id = $itemcompose->id;
-                                $itemcomposematerial->item_id = $material['id'];
-                                $itemcomposematerial->qty = $material['quantity'];
-                                $itemcomposematerial->save();
-              
-                            }
-                        }
-                    }
                 }
 
                 $_item->save();
@@ -820,6 +892,16 @@ class NpcController extends Controller
             }
 
             
+        }
+    }
+
+    public function removeAsterisk() {
+        $items = Item::where('name_en', 'LIKE', '%*%')->get();
+
+        foreach ($items as $item) {
+            $_item = Item::find($item->id);
+            $_item->name_en = str_replace('*', '', $_item->name_en);
+            $_item->save();
         }
     }
 

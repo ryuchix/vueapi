@@ -241,7 +241,7 @@ class ItemController extends Controller
     }
 
     public function getHeadwears() {
-        return Item::whereIn('type_name', $this->headwears__)->orderBy('name_en', 'asc')->paginate();
+        return Item::whereIn('type_name', $this->headwears__)->orderBy('name_en')->paginate();
     }
 
     public function getHeadwear($id) {

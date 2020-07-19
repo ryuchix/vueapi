@@ -31,9 +31,10 @@ use Illuminate\Support\Facades\Route;
 // Route::get('renameSlots', 'NpcController@renameSlots');
 // Route::get('getMissingInfoInHeadwears', 'NpcController@getMissingInfoInHeadwears');
 // Route::get('getMissingCardImage', 'NpcController@getMissingCardImage');
+//  Route::get('removeAsterisk', 'NpcController@removeAsterisk');
 
 // Route::post('getHeadwears', 'NpcController@getHeadwears');
-
+// Route::post('getCards', 'NpcController@getCards');
 // api
 Route::get('monsters', 'MonsterController@index');
 Route::get('monster/{id}', 'MonsterController@getMonster');
