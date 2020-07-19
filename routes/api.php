@@ -32,8 +32,7 @@ use Illuminate\Support\Facades\Route;
 // Route::get('getMissingInfoInHeadwears', 'NpcController@getMissingInfoInHeadwears');
 // Route::get('getMissingCardImage', 'NpcController@getMissingCardImage');
 
-
-Route::post('getHeadwears', 'NpcController@getHeadwears');
+// Route::post('getHeadwears', 'NpcController@getHeadwears');
 
 // api
 Route::get('monsters', 'MonsterController@index');
