@@ -69,7 +69,7 @@
 
             {{ csrf_field() }}
             <input placeholder="et" type="text" id="et" name="et" style="padding: 20px; width: 80%" autocomplete="off">
-            <input placeholder="etmini" type="text" id="etmini" name="et" style="padding: 20px; width: 80%" autocomplete="off">
+            <input placeholder="etmini" type="text" id="etmini" name="etmini" style="padding: 20px; width: 80%" autocomplete="off">
             <input placeholder="vr" type="text" id="vr" name="vr" style="padding: 20px; width: 80%" autocomplete="off">
             <input placeholder="weeklies" type="text" name="weeklies" style="padding: 20px; width: 80%" autocomplete="off">
             <input placeholder="boc" type="text" name="boc" style="padding: 20px; width: 80%" autocomplete="off">
