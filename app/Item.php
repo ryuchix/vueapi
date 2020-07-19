@@ -29,8 +29,6 @@ class Item extends Model
         'Armors',
         'Accessory',
         'Off-hand - Shield',
-        'Costume',
-        'Face'
     ];
 
     private $cards__ = [
@@ -61,7 +59,8 @@ class Item extends Model
         'Seafood',
         'Spice',
         'Vegetable',
-        'Zeny'
+        'Zeny',
+        'Gift Box'
     ];
 
     private $headwears__ = [

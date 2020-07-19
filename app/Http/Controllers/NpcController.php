@@ -25,178 +25,22 @@ class NpcController extends Controller
 {
 
     private $iddd = [
-
-        '40057',
-        '140057',
-        '40058',
-        '140058',
-        '40059',
-        '140059',
-        '40066',
-        '140066',
-        '40359',
-        '140359',
-        '40360',
-        '140360',
-        '40361',
-        '140361',
-        '40660',
-        '140660',
-        '40661',
-        '140661',
-        '40662',
-        '140662',
-        '40663',
-        '140663',
-        '40671',
-        '140671',
-        '40676',
-        '140676',
-        '40766',
-        '140766',
-        '40767',
-        '140767',
-        '40944',
-        '140944',
-        '40945',
-        '140945',
-        '41254',
-        '141254',
-        '41255',
-        '141255',
-        '41256',
-        '141256',
-        '41257',
-        '141257',
-        '41258',
-        '141258',
-        '41565',
-        '141565',
-        '41566',
-        '141566',
-        '41567',
-        '141567',
-        '41568',
-        '141568',
-        '41867',
-        '141867',
-        '41868',
-        '141868',
-        '41869',
-        '141869',
-        '41870',
-        '141870',
-        '41871',
-        '141871',
-        '44308',
-        '144308',
-        '44309',
-        '144309',
-        '44310',
-        '144310',
-        '62540',
-        '162540',
-        '62541',
-        '162541',
-        '62542',
-        '162542',
-        '162551',
-        '62840',
-        '162840',
-        '62844',
-        '162844',
-        '63140',
-        '163140',
-        '63144',
-        '163144',
-        '63440',
-        '163440',
-        '63444',
-        '163444',
-        '42086',
-        '142086',
-        '142087',
-        '42087',
-        '42088',
-        '142088',
-        '42089',
-        '142089',
-        '42090',
-        '142090',
-        '42091',
-        '142091',
-        '42092',
-        '142092',
-        '42093',
-        '142093',
-        '42094',
-        '142094',
-        '42095',
-        '142095',
-        '42096',
-        '142096',
-        '42097',
-        '142097',
-        '42098',
-        '142098',
-        '42099',
-        '142099',
-        '42100',
-        '142100',
-        '42101',
-        '142101',
-        '42102',
-        '142102',
-        '42103',
-        '142103',
-        '42104',
-        '142104',
-        '42105',
-        '142105',
-        '42106',
-        '142106',
-        '42107',
-        '142107',
-        '42113',
-        '142113',
-        '44047',
-        '144047',
-        '44048',
-        '144048',
-        '44049',
-        '144049',
-        '44050',
-        '144050',
-        '44051',
-        '144051',
-        '44052',
-        '144052',
-        '44053',
-        '144053',
-        '44054',
-        '144054',
-        '44055',
-        '144055',
-        '44056',
-        '144056',
-        '44057',
-        '144057',
-        '44058',
-        '144058',
-        '44059',
-        '144059',
-        '44060',
-        '144060',
-        '44061',
-        '144061',
-        '44062',
-        '144062',
-        '44063',
-        '144063',
-        '44066',
-        '144066',
-        '44069',
-        '144069'
+        '3031851',
+'3031700',
+'3031553',
+'3031552',
+'3031521',
+'3031520',
+'3031284',
+'3031283',
+'3031260',
+'3031187',
+'3031186',
+'3031176',
+'3031168',
+'3031167',
+'3001862',
+'3001861'
     ];
 
     private $cards__ = [
@@ -218,6 +62,317 @@ class NpcController extends Controller
         'Mouth',
         'Tail',
     ];
+
+    public function getHeadwears(Request $request) { 
+        $url = $request->url;
+        $removedString = str_replace('https://www.romcodex.com/item/', '', $url);
+        $id = strstr($removedString, '/', true);
+
+        try {
+            
+            $json = file_get_contents('https://www.romcodex.com/api/item/'.$id);
+            $result = json_decode($json, true);
+
+            $checkItem = Item::where('key_id', $id)->first();
+
+            if (!$checkItem) {
+
+                copy('https://www.romcodex.com/icons/item/'.$result['Icon'].'.png', public_path('/uploads/items/'.Str::slug($result['NameZh__EN'].'-'.time(), '-').'-img.jpg'));
+                
+                $item = new Item();
+                $item->key_id = $result['key_id'];
+                $item->slug = $this->createSlug($result['NameZh__EN']);
+                $item->sell_price = array_key_exists("SellPrice", $result) ? $result['SellPrice'] : null;
+                $item->icon = Str::slug($result['NameZh__EN'].'-'.time(), '-').'-img.jpg';
+                $item->desc = array_key_exists("Desc", $result) ? $result['Desc'] : null;
+                $item->desc_en = array_key_exists("Desc__EN", $result) ? $result['Desc__EN'] : null;
+                $item->type = array_key_exists("Type", $result) ? $result['Type'] : null;
+                $item->name_ch = array_key_exists("NameZh", $result) ? $result['NameZh'] : null;
+                $item->name_en = array_key_exists("NameZh__EN", $result) ? $result['NameZh__EN'] : null;
+                $item->auction_price = array_key_exists("AuctionPrice", $result) ? $result['AuctionPrice'] : null;
+                $item->type_name = array_key_exists("TypeName", $result) ? $result['TypeName'] : null;
+                $item->compose_output_id = array_key_exists("ComposeOutputID", $result) ? $result['ComposeOutputID'] : null;
+                $item->compose_id = array_key_exists("ComposeID", $result) ? $result['ComposeID'] : null;
+
+                if (array_key_exists("AttrData", $result)) {
+                    if (array_key_exists("Stat", $result['AttrData'])) {
+                        $item->stat = json_encode($result['AttrData']['Stat']);
+                    }
+                    if (array_key_exists("StatExtra", $result['AttrData'])) {
+                        $item->stat_extra = json_encode($result['AttrData']['StatExtra']);
+                    }
+                    if (array_key_exists("Type", $result['AttrData'])) {
+                        $item->stat_type = json_encode($result['AttrData']['Type']);
+                    }
+                    if (array_key_exists("CanEquip", $result['AttrData'])) {
+                        $item->can_equip = json_encode($result['AttrData']['CanEquip']);
+                    }
+                }
+
+                if (array_key_exists("UnlockEffect", $result)) {
+                    foreach ($result['UnlockEffect'] as $unlock) {
+                        $item->unlock_effect = json_encode($unlock['Dsc__EN']);
+                    }
+                }
+
+                if (array_key_exists("DepositEffect", $result)) {
+                    foreach ($result['DepositEffect'] as $unlock) {
+                        $item->deposit_effect = json_encode($unlock['Dsc__EN']);
+                    }
+                }
+                $item->compose_recipe = array_key_exists("ComposeRecipe", $result);
+                $item->prior_equipment = array_key_exists("PriorEquipment", $result) ? $result['PriorEquipment']['key_id'] : null;
+                $item->quality = array_key_exists("Quality", $result) ? $result['Quality'] : null;
+
+                $item->save();
+
+                if (array_key_exists("ComposeRecipe", $result)) {
+
+                    if ($result['TypeName'] == 'Blueprint') {
+                        foreach ($result['ComposeRecipe']['composeTo'] as $key => $compose) {
+
+                            $checkCompose = ItemCompose::where('item_id', $item->id)->first();
+                            if ($checkCompose) {
+    
+                                $composematerials = ItemComposeMaterial::where('item_compose_id', $checkCompose->id)->get();
+                                foreach ($$composematerials as $composematerial) {
+                                    $composematerial->delete();
+                                }
+    
+                                $checkCompose->delete();
+                            }
+    
+                            $itemcompose = new ItemCompose();
+                            $itemcompose->item_id = $item->id;
+                            $itemcompose->is_input = $compose['isInput'];      
+                            $itemcompose->cost = $compose['cost'];
+                            $itemcompose->item_output = $compose['output'][0]['id'];
+                            $itemcompose->save();
+    
+                            foreach ($compose['input'] as $key => $material) {
+                                $checkitem = Item::where('key_id', $material['id'])->first();
+    
+                                $itemcomposematerial = new ItemComposeMaterial();
+                                $itemcomposematerial->item_compose_id = $itemcompose->id;
+                                $itemcomposematerial->item_id = $material['id'];
+                                $itemcomposematerial->qty = $material['quantity'];
+                                $itemcomposematerial->save();
+
+                                if ($checkitem == null) {
+                                    $this->getHeadwearss($material['id']);
+                                }
+                                
+                            }
+                        }
+                    } else {
+                        foreach ($result['ComposeRecipe']['composeFrom'] as $key => $compose) {
+
+                            $checkCompose = ItemCompose::where('item_id', $item->id)->first();
+                            if ($checkCompose) {
+    
+                                $composematerials = ItemComposeMaterial::where('item_compose_id', $checkCompose->id)->get();
+                                foreach ($$composematerials as $composematerial) {
+                                    $composematerial->delete();
+                                }
+    
+                                $checkCompose->delete();
+                            }
+    
+                            $itemcompose = new ItemCompose();
+                            $itemcompose->item_id = $item->id;
+                            $itemcompose->is_input = $compose['isInput'];      
+                            $itemcompose->cost = $compose['cost'];
+                            $itemcompose->item_output = $compose['output'][0]['id'];
+                            $itemcompose->save();
+    
+                            foreach ($compose['input'] as $key => $material) {
+                                $checkitem = Item::where('key_id', $material['id'])->first();
+    
+                                $itemcomposematerial = new ItemComposeMaterial();
+                                $itemcomposematerial->item_compose_id = $itemcompose->id;
+                                $itemcomposematerial->item_id = $material['id'];
+                                $itemcomposematerial->qty = $material['quantity'];
+                                $itemcomposematerial->save();
+
+                                if ($checkitem == null) {
+                                    $this->getHeadwearss($material['id']);
+                                }
+                                
+                            }
+                        }
+                    }
+
+                
+
+                }
+                $msg = $item->name_en;
+                return view('headwear')->with(['item' => $msg]);
+            }  else {
+                $msg = 'exists';
+                return view('headwear')->with(['item' => $msg]);
+            }
+   
+
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
+
+
+    public function getHeadwearss($id) { 
+
+        try {
+            
+            $json = file_get_contents('https://www.romcodex.com/api/item/'.$id);
+            $result = json_decode($json, true);
+
+            $checkItem = Item::where('key_id', $id)->first();
+
+            if (!$checkItem) {
+
+                copy('https://www.romcodex.com/icons/item/'.$result['Icon'].'.png', public_path('/uploads/items/'.Str::slug($result['NameZh__EN'].'-'.time(), '-').'-img.jpg'));
+                
+                $item = new Item();
+                $item->key_id = $result['key_id'];
+                $item->slug = $this->createSlug($result['NameZh__EN']);
+                $item->sell_price = array_key_exists("SellPrice", $result) ? $result['SellPrice'] : null;
+                $item->icon = Str::slug($result['NameZh__EN'].'-'.time(), '-').'-img.jpg';
+                $item->desc = array_key_exists("Desc", $result) ? $result['Desc'] : null;
+                $item->desc_en = array_key_exists("Desc__EN", $result) ? $result['Desc__EN'] : null;
+                $item->type = array_key_exists("Type", $result) ? $result['Type'] : null;
+                $item->name_ch = array_key_exists("NameZh", $result) ? $result['NameZh'] : null;
+                $item->name_en = array_key_exists("NameZh__EN", $result) ? $result['NameZh__EN'] : null;
+                $item->auction_price = array_key_exists("AuctionPrice", $result) ? $result['AuctionPrice'] : null;
+                $item->type_name = array_key_exists("TypeName", $result) ? $result['TypeName'] : null;
+                $item->compose_output_id = array_key_exists("ComposeOutputID", $result) ? $result['ComposeOutputID'] : null;
+                $item->compose_id = array_key_exists("ComposeID", $result) ? $result['ComposeID'] : null;
+
+                if (array_key_exists("AttrData", $result)) {
+                    if (array_key_exists("Stat", $result['AttrData'])) {
+                        $item->stat = json_encode($result['AttrData']['Stat']);
+                    }
+                    if (array_key_exists("StatExtra", $result['AttrData'])) {
+                        $item->stat_extra = json_encode($result['AttrData']['StatExtra']);
+                    }
+                    if (array_key_exists("Type", $result['AttrData'])) {
+                        $item->stat_type = json_encode($result['AttrData']['Type']);
+                    }
+                    if (array_key_exists("CanEquip", $result['AttrData'])) {
+                        $item->can_equip = json_encode($result['AttrData']['CanEquip']);
+                    }
+                }
+
+                if (array_key_exists("UnlockEffect", $result)) {
+                    foreach ($result['UnlockEffect'] as $unlock) {
+                        $item->unlock_effect = json_encode($unlock['Dsc__EN']);
+                    }
+                }
+
+                if (array_key_exists("DepositEffect", $result)) {
+                    foreach ($result['DepositEffect'] as $unlock) {
+                        $item->deposit_effect = json_encode($unlock['Dsc__EN']);
+                    }
+                }
+                $item->compose_recipe = array_key_exists("ComposeRecipe", $result);
+                $item->prior_equipment = array_key_exists("PriorEquipment", $result) ? $result['PriorEquipment']['key_id'] : null;
+                $item->quality = array_key_exists("Quality", $result) ? $result['Quality'] : null;
+
+                $item->save();
+
+                if (array_key_exists("ComposeRecipe", $result)) {
+
+                    if ($result['TypeName'] == 'Blueprint') {
+                        foreach ($result['ComposeRecipe']['composeTo'] as $key => $compose) {
+
+                            $checkCompose = ItemCompose::where('item_id', $item->id)->first();
+                            if ($checkCompose) {
+    
+                                $composematerials = ItemComposeMaterial::where('item_compose_id', $checkCompose->id)->get();
+                                foreach ($$composematerials as $composematerial) {
+                                    $composematerial->delete();
+                                }
+    
+                                $checkCompose->delete();
+                            }
+    
+                            $itemcompose = new ItemCompose();
+                            $itemcompose->item_id = $item->id;
+                            $itemcompose->is_input = $compose['isInput'];      
+                            $itemcompose->cost = $compose['cost'];
+                            $itemcompose->item_output = $compose['output'][0]['id'];
+                            $itemcompose->save();
+    
+                            foreach ($compose['input'] as $key => $material) {
+                                $checkitem = Item::where('key_id', $material['id'])->first();
+    
+                                $itemcomposematerial = new ItemComposeMaterial();
+                                $itemcomposematerial->item_compose_id = $itemcompose->id;
+                                $itemcomposematerial->item_id = $material['id'];
+                                $itemcomposematerial->qty = $material['quantity'];
+                                $itemcomposematerial->save();
+
+                                if ($checkitem == null) {
+                                    $this->getHeadwearss($material['id']);
+                                }
+                                
+                            }
+                        }
+                    } else {
+                        foreach ($result['ComposeRecipe']['composeFrom'] as $key => $compose) {
+
+                            $checkCompose = ItemCompose::where('item_id', $item->id)->first();
+                            if ($checkCompose) {
+    
+                                $composematerials = ItemComposeMaterial::where('item_compose_id', $checkCompose->id)->get();
+                                foreach ($$composematerials as $composematerial) {
+                                    $composematerial->delete();
+                                }
+    
+                                $checkCompose->delete();
+                            }
+    
+                            $itemcompose = new ItemCompose();
+                            $itemcompose->item_id = $item->id;
+                            $itemcompose->is_input = $compose['isInput'];      
+                            $itemcompose->cost = $compose['cost'];
+                            $itemcompose->item_output = $compose['output'][0]['id'];
+                            $itemcompose->save();
+    
+                            foreach ($compose['input'] as $key => $material) {
+                                $checkitem = Item::where('key_id', $material['id'])->first();
+    
+                                $itemcomposematerial = new ItemComposeMaterial();
+                                $itemcomposematerial->item_compose_id = $itemcompose->id;
+                                $itemcomposematerial->item_id = $material['id'];
+                                $itemcomposematerial->qty = $material['quantity'];
+                                $itemcomposematerial->save();
+
+                                if ($checkitem == null) {
+                                    $this->getHeadwearss($material['id']);
+                                }
+                                
+                            }
+                        }
+                    }
+
+                
+
+                }
+                $msg = $item->name_en;
+                return view('headwear')->with(['item' => $msg]);
+            }  else {
+                $msg = 'exists';
+                return view('headwear')->with(['item' => $msg]);
+            }
+   
+
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
+
 
     public function addRegularItem() {
         try {

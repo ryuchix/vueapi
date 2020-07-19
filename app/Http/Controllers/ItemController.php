@@ -85,7 +85,8 @@ class ItemController extends Controller
         'Seafood',
         'Spice',
         'Vegetable',
-        'Zeny'
+        'Zeny',
+        'Gift Box'
     ];
 
     private $jobs__ = [
@@ -240,7 +241,7 @@ class ItemController extends Controller
     }
 
     public function getHeadwears() {
-        return Item::whereIn('type_name', $this->headwears__)->orderBy('name_en')->paginate();
+        return Item::whereIn('type_name', $this->headwears__)->orderBy('id', 'desc')->paginate();
     }
 
     public function getHeadwear($id) {
@@ -251,9 +252,10 @@ class ItemController extends Controller
         $item['item_to'] = $to;
         $item['item_from'] = $from;
         $jobs = [];
-        $can_equip = json_decode($item->can_equip);
+        $can_equip = is_array($item->can_equip) ? $item->can_equip : json_decode($item->can_equip, true);
         if ($can_equip != null) {
-            foreach($can_equip as $v) {
+            $anothecheck = is_array($can_equip) ? $can_equip : json_decode($can_equip, true);
+            foreach($anothecheck as $v) {
                 $jobs[] = $this->jobs__[$v];
             }
         }
