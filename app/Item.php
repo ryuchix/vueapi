@@ -91,7 +91,7 @@ class Item extends Model
 
     public function getUpdatedAtAttribute($value) {
         $dt = date_create($value);
-        return $this->attributes['updated_at'] = date_format($dt, 'Y-m-d\TH:i:s.P');
+        return $this->attributes['updated_at'] = date_format($dt, 'Y-m-d\TH:i:sP');
     }
 
     // public function getCanEquipAttribute($value) {
