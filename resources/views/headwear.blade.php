@@ -69,13 +69,13 @@
 
             {{ csrf_field() }}
 
-            <input type="text" name="url" style="padding: 50px">
+            <input type="text" name="url" style="padding: 50px; width: 100%" autocomplete="off">
 
             <button type="submit">Submit</button>
             
             </form>
 
-            {{ $item }}
+            {{ $item != null ? $item : '' }}
         </div>
     </body>
 </html>

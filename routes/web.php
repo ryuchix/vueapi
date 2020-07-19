@@ -18,7 +18,7 @@ Route::get('/', function () {
 });
 
 Route::get('/headwear', function () {
-    return view('headwear');
+    return view('headwear')->with(['item' => '']);
 });
 
 Auth::routes();

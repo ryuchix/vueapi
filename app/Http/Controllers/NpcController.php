@@ -64,9 +64,18 @@ class NpcController extends Controller
     ];
 
     public function getHeadwears(Request $request) { 
-        $url = $request->url;
-        $removedString = str_replace('https://www.romcodex.com/item/', '', $url);
-        $id = strstr($removedString, '/', true);
+
+
+
+
+
+        if ($request->has('url')) {
+            $id = $request->input('url');
+            // $removedString = str_replace('https://www.romcodex.com/item/', '', $url);
+            // $id = strstr($removedString, '/', true);
+        } else {
+            exit;
+        }
 
         try {
             
@@ -77,13 +86,13 @@ class NpcController extends Controller
 
             if (!$checkItem) {
 
-                copy('https://www.romcodex.com/icons/item/'.$result['Icon'].'.png', public_path('/uploads/items/'.Str::slug($result['NameZh__EN'].'-'.time(), '-').'-img.jpg'));
+                copy('https://www.romcodex.com/icons/item/'.$result['Icon'].'.png', public_path('/uploads/items/'.Str::slug($result['NameZh__EN'].'-'.$result['TypeName'], '-').'-img.jpg'));
                 
                 $item = new Item();
                 $item->key_id = $result['key_id'];
                 $item->slug = $this->createSlug($result['NameZh__EN']);
                 $item->sell_price = array_key_exists("SellPrice", $result) ? $result['SellPrice'] : null;
-                $item->icon = Str::slug($result['NameZh__EN'].'-'.time(), '-').'-img.jpg';
+                $item->icon = Str::slug($result['NameZh__EN'].'-'.$result['TypeName'], '-').'-img.jpg';
                 $item->desc = array_key_exists("Desc", $result) ? $result['Desc'] : null;
                 $item->desc_en = array_key_exists("Desc__EN", $result) ? $result['Desc__EN'] : null;
                 $item->type = array_key_exists("Type", $result) ? $result['Type'] : null;
@@ -231,13 +240,13 @@ class NpcController extends Controller
 
             if (!$checkItem) {
 
-                copy('https://www.romcodex.com/icons/item/'.$result['Icon'].'.png', public_path('/uploads/items/'.Str::slug($result['NameZh__EN'].'-'.time(), '-').'-img.jpg'));
+                copy('https://www.romcodex.com/icons/item/'.$result['Icon'].'.png', public_path('/uploads/items/'.Str::slug($result['NameZh__EN'].'-'.$result['TypeName'], '-').'-img.jpg'));
                 
                 $item = new Item();
                 $item->key_id = $result['key_id'];
                 $item->slug = $this->createSlug($result['NameZh__EN']);
                 $item->sell_price = array_key_exists("SellPrice", $result) ? $result['SellPrice'] : null;
-                $item->icon = Str::slug($result['NameZh__EN'].'-'.time(), '-').'-img.jpg';
+                $item->icon = Str::slug($result['NameZh__EN'].'-'.$result['TypeName'], '-').'-img.jpg';
                 $item->desc = array_key_exists("Desc", $result) ? $result['Desc'] : null;
                 $item->desc_en = array_key_exists("Desc__EN", $result) ? $result['Desc__EN'] : null;
                 $item->type = array_key_exists("Type", $result) ? $result['Type'] : null;
@@ -371,7 +380,6 @@ class NpcController extends Controller
             throw $th;
         }
     }
-
 
 
     public function addRegularItem() {
