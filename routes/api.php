@@ -37,6 +37,9 @@ use Illuminate\Support\Facades\Route;
 // Route::post('getCards', 'NpcController@getCards');
 // api
 
+Route::post('saveWeeklies', 'SitemapController@saveWeeklies');
+Route::get('getWeeklies', 'SitemapController@getWeeklies');
+
 // sitemaps
 Route::get('/sitemap', 'SitemapController@index');
 Route::get('/sitemap/monsters', 'SitemapController@monsters');

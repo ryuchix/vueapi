@@ -20,6 +20,7 @@ use App\MapMonster;
 use App\ItemCompose;
 use App\ItemComposeMaterial;
 use App\Blog;
+use App\Event;
 use Str;
 
 class SitemapController extends Controller
@@ -153,6 +154,19 @@ class SitemapController extends Controller
         return response()->json([
             'items' => $items,
         ]);
-	}
+    }
+    
+    public function saveWeeklies(Request $request) {
+        $inputs = $request->all();
+        $event = Event::create($inputs);
+
+        return view('weekly')->with(['item' => 'saved']);
+    }
+    
+    public function getWeeklies() {
+        $event = Event::latest('created_at')->first();
+
+        return $event;
+    }
 
 }

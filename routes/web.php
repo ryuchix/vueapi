@@ -25,6 +25,10 @@ Route::get('/card', function () {
     return view('card')->with(['item' => '']);
 });
 
+Route::get('/weekly', function () {
+    return view('weekly')->with(['item' => '']);
+});
+
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
