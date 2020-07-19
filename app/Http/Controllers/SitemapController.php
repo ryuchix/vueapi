@@ -90,12 +90,12 @@ class SitemapController extends Controller
     ];
 
 	public function index() {
-        $post = Blog::orderBy('updated_at', 'desc')->first();
-        $card = Item::whereIn('type_name', $this->cards__)->orderBy('updated_at', 'desc')->first();
-        $equipment = Item::whereIn('type_name', $this->equips__)->orderBy('updated_at', 'desc')->first();
-        $headwear = Item::whereIn('type_name', $this->headwears__)->orderBy('updated_at', 'desc')->first();
-        $item = Item::whereIn('type_name', $this->items__)->orderBy('updated_at', 'desc')->first();
-        $monster = Monster::orderBy('updated_at', 'desc')->first();
+        $post = Blog::orderBy('updated_at', 'desc')->select('updated_at')->first();
+        $card = Item::whereIn('type_name', $this->cards__)->orderBy('updated_at', 'desc')->select('updated_at')->first();
+        $equipment = Item::whereIn('type_name', $this->equips__)->orderBy('updated_at', 'desc')->select('updated_at')->first();
+        $headwear = Item::whereIn('type_name', $this->headwears__)->orderBy('updated_at', 'desc')->select('updated_at')->first();
+        $item = Item::whereIn('type_name', $this->items__)->orderBy('updated_at', 'desc')->select('updated_at')->first();
+        $monster = Monster::orderBy('updated_at', 'desc')->select('updated_at')->first();
       
         return response()->json([
             'post' => $post,
