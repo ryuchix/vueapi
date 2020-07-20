@@ -64,15 +64,16 @@
     </head>
     <body>
         <div class="flex-center position-ref full-height">
-            
             <form action="{{ url('api/saveWeeklies') }}" method="post">
 
             {{ csrf_field() }}
-            <input placeholder="et" type="text" id="et" name="et" style="padding: 20px; width: 80%" autocomplete="off">
-            <input placeholder="etmini" type="text" id="etmini" name="etmini" style="padding: 20px; width: 80%" autocomplete="off">
-            <input placeholder="vr" type="text" id="vr" name="vr" style="padding: 20px; width: 80%" autocomplete="off">
-            <input placeholder="weeklies" type="text" name="weeklies" style="padding: 20px; width: 80%" autocomplete="off">
-            <input placeholder="boc" type="text" name="boc" style="padding: 20px; width: 80%" autocomplete="off">
+            <input value="{{ $event->date }}" placeholder="date" type="text" name="date" style="padding: 20px; width: 80%" autocomplete="off">
+            <input value="{{ $event->et }}" placeholder="et" type="text" id="et" name="et" style="padding: 20px; width: 80%" autocomplete="off">
+            <input value="{{ $event->etmini }}" placeholder="etmini" type="text" id="etmini" name="etmini" style="padding: 20px; width: 80%" autocomplete="off">
+            <input value="{{ $event->vr }}" placeholder="vr" type="text" id="vr" name="vr" style="padding: 20px; width: 80%" autocomplete="off">
+
+            <input value="{{ $event->etglobal }}" placeholder="etglobal" type="text" id="etglobal" name="etglobal" style="padding: 20px; width: 80%" autocomplete="off">
+            <input value="{{ $event->etglobalmini }}" placeholder="etglobalmini" type="text" id="etglobalmini" name="etglobalmini" style="padding: 20px; width: 80%" autocomplete="off">
 
             <button type="submit">Submit</button>
             

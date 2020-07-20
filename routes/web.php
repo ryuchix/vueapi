@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Event;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,7 +27,8 @@ Route::get('/card', function () {
 });
 
 Route::get('/weekly', function () {
-    return view('weekly')->with(['item' => '']);
+    $event = Event::find(1);
+    return view('weekly', compact('event'))->with(['item' => '']);
 });
 
 Auth::routes();

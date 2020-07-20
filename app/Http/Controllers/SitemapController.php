@@ -158,9 +158,11 @@ class SitemapController extends Controller
     
     public function saveWeeklies(Request $request) {
         $inputs = $request->all();
-        $event = Event::create($inputs);
 
-        return view('weekly')->with(['item' => 'saved']);
+        $event = Event::find(1);
+        $event->update($inputs);
+
+        return view('weekly')->with(['item' => 'saved', 'event' => $event]);
     }
     
     public function getWeeklies() {
