@@ -167,6 +167,7 @@ class ItemController extends Controller
         144 => 'Super Novice',
         145 => 'Novice Guardian',
         
+        150 => 'Novice Doram',
         151 => 'Warlock Doram',
         152 => 'Spiritualist',
         153 => 'Summoner',
@@ -212,6 +213,91 @@ class ItemController extends Controller
         return $equip;
     }
 
+    public function filterEquipment(Request $request) {
+        $q = Item::query();
+
+        $q->whereIn('type_name', $this->equips__)->where('quality', '!=', 1);
+
+        if ($request->has('job')) {
+            if ($request->job == 'Knight') {
+                $jobs = [12, 13, 14, 15];
+                $q->where('jobclass', 'like', '%' . $request->job . '%');
+            }
+            if ($request->job == 'Advanced Novice') {
+                $jobs = [143, 144, 145];
+                $q->where('jobclass', 'like', '%' . $request->job . '%');
+                
+            }
+            if ($request->job == 'Alchemist') {
+                $jobs = [132, 133, 134, 135];
+                $q->where('jobclass', 'like', '%' . $request->job . '%');                
+            }
+            if ($request->job == 'Assassin') {
+                $jobs = [32, 33, 34, 35];
+                $q->where('jobclass', 'like', '%' . $request->job . '%');                
+            }
+            if ($request->job == 'Bard') {
+                $jobs = [102, 103, 104, 105];
+                $q->where('jobclass', 'like', '%' . $request->job . '%');                
+            }
+            if ($request->job == 'Blacksmith') {
+                $jobs = [62, 63, 64, 65];
+                $q->where('jobclass', 'like', '%' . $request->job . '%');                
+            }
+            if ($request->job == 'Crusader') {
+                $jobs = [72, 73, 74, 75];
+                $q->where('jobclass', 'like', '%' . $request->job . '%');                
+            }
+            if ($request->job == 'Dancer') {
+                $jobs = [112, 113, 114, 115];
+                $q->where('jobclass', 'like', '%' . $request->job . '%');                
+            }
+            if ($request->job == 'Doram') {
+                $jobs = [152, 153, 154, 155];
+                $q->where('jobclass', 'like', '%' . $request->job . '%');                
+            }
+            if ($request->job == 'Hunter') {
+                $jobs = [42, 43, 44, 45];
+                $q->where('jobclass', 'like', '%' . $request->job . '%');                
+            }
+            if ($request->job == 'Monk') {
+                $jobs = [122, 123, 124, 125];
+                $q->where('jobclass', 'like', '%' . $request->job . '%');                
+            }
+            if ($request->job == 'Priest') {
+                $jobs = [52, 53, 54, 55];
+                $q->where('jobclass', 'like', '%' . $request->job . '%');                
+            }
+            if ($request->job == 'Rogue') {
+                $jobs = [92, 93, 94, 95];
+                $q->where('jobclass', 'like', '%' . $request->job . '%');                
+            }
+            if ($request->job == 'Sage') {
+                $jobs = [82, 83, 84, 85];
+                $q->where('jobclass', 'like', '%' . $request->job . '%');                
+            }
+            if ($request->job == 'Wizard') {
+                $jobs = [22, 23, 24, 25];
+                $q->where('jobclass', 'like', '%' . $request->job . '%');                
+            }
+        }
+
+        if ($request->has('type')) {
+            if ($request->position != 'All') {
+                $q->where('type_name', 'LIKE', "%$request->type%");
+            }
+        }
+
+        if ($request->has('position')) {
+            if ($request->position != 'All') {
+                $q->where('type_name', 'LIKE', "%$request->position%");
+            }
+        }
+
+        return $q->orderBy('name_en')->paginate()->appends($request->all());
+
+    }
+
     public function cards() {
         return Item::whereIn('type_name', $this->cards__)->select('id', 'slug', 'quality', 'name_en', 'icon', 'type_name', 'type', 'stat', 'unlock_effect', 'deposit_effect')->orderBy('name_en')->paginate();
     }
@@ -222,6 +308,54 @@ class ItemController extends Controller
         $itemcompose = ItemCompose::where('item_id', $item->id)->with('materials')->get();
         $item['compose'] = $itemcompose;
         return $item;
+    }
+
+    public function filterCard(Request $request) {
+        $q = Item::query();
+
+        $q->whereIn('type_name', $this->cards__)->select('id', 'slug', 'quality', 'name_en', 'icon', 'type_name', 'type', 'stat', 'unlock_effect', 'deposit_effect');
+
+        if ($request->has('position')) {
+            if ($request->position != 'All' && $request->position != 'Footgear') {
+                $q->where('type_name', 'LIKE', "%$request->position%");
+            }
+            if ($request->position == 'Footgear') {
+                $q->where('type_name', 'LIKE', "%Shoe%");
+            }
+        }
+
+        if ($request->has('unlock')) {
+            if ($request->unlock != 'All') {
+                $unlocks = $request->unlock . ' ';
+                $q->where('unlock_effect', 'LIKE', "%$unlocks%");
+            }
+        }
+        
+        if ($request->has('deposit')) {
+            if ($request->deposit != 'All') {
+                $deposits = $request->deposit . ' ';
+                $q->where('deposit_effect', 'LIKE', "%$deposits%");
+            }
+        }
+        
+        if ($request->has('color')) {
+            if ($request->color != 'All') {
+                if ($request->color == 'White') {
+                    $q->where('quality', 1);
+                }
+                if ($request->color == 'Green') {
+                    $q->where('quality', 2);
+                }
+                if ($request->color == 'Blue') {
+                    $q->where('quality', 3);
+                }
+                if ($request->color == 'Violet') {
+                    $q->where('quality', 4);
+                }
+            }
+        }
+
+        return $q->orderBy('name_en')->paginate()->appends($request->all());
     }
 
     public function getItems() {
@@ -263,6 +397,37 @@ class ItemController extends Controller
         $itemcompose = ItemCompose::where('item_id', $item->id)->with('materials')->get();
         $item['compose'] = $itemcompose;
         return $item;
+    }
+
+    public function filterHeadwear(Request $request) {
+        $q = Item::query();
+
+        $q->whereIn('type_name', $this->headwears__);
+
+        if ($request->has('position')) {
+            if ($request->position != 'All' && $request->position != 'Head') {
+                $q->where('type_name', $request->position);
+            }
+            if ($request->position == 'Head') {
+                $q->where('type_name', 'Headwear');
+            }
+        }
+
+        if ($request->has('unlock')) {
+            if ($request->unlock != 'All') {
+                $unlocks = $request->unlock . ' ';
+                $q->where('unlock_effect', 'LIKE', "%$unlocks%");
+            }
+        }
+        
+        if ($request->has('deposit')) {
+            if ($request->deposit != 'All') {
+                $deposits = $request->deposit . ' ';
+                $q->where('deposit_effect', 'LIKE', "%$deposits%");
+            }
+        }
+
+        return $q->orderBy('name_en')->paginate()->appends($request->all());
     }
 
     public function search($query) {

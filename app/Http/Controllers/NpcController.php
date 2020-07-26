@@ -63,6 +63,92 @@ class NpcController extends Controller
         'Tail',
     ];
 
+    private $jobs__ = [
+        0 => 'All jobs',
+        1 => 'Novice',
+        11 => 'Swordsman',
+        12 => 'Knight',
+        13 => 'Lord Knight',
+        14 => 'Rune Knight',
+        15 => 'Runemaster',
+        
+        72 => 'Crusader',
+        73 => 'Paladin',
+        74 => 'Royal Guard',
+        75 => 'Divine Avenger',
+        
+        21 => 'Mage',
+        22 => 'Wizard',
+        23 => 'High Wizard',
+        24 => 'Warlock',
+        25 => 'Arcane Master',
+        
+        82 => 'Sage',
+        83 => 'Professor',
+        84 => 'Sorcerer',
+        85 => 'Chronomancer',
+        
+        31 => 'Thief',
+        32 => 'Assassin',
+        33 => 'Assassin Cross',
+        34 => 'Guillotine Cross',
+        35 => 'Soulblade Cross',
+         
+        92 => 'Rogue',
+        93 => 'Stalker',
+        94 => 'Shadow Chaser',
+        95 => 'Phantom Dancer',
+        
+        41 => 'Archer',
+        42 => 'Hunter',
+        43 => 'Sniper',
+        44 => 'Ranger',
+        45 => 'Stellar Hunter',
+         
+        102 => 'Bard',
+        103 => 'Clown',
+        104 => 'Minstrel',
+        105 => 'Solar Trouvere',
+        
+        112 => 'Dancer',
+        113 => 'Gypsy',
+        114 => 'Wanderer',
+        115 => 'Luna Danseuse',
+        
+        51 => 'Acolyte',
+        52 => 'Priest',
+        53 => 'High Priest',
+        54 => 'Archbishop',
+        55 => 'Saint',
+        
+        122 => 'Monk',
+        123 => 'Champion',
+        124 => 'Shura',
+        125 => 'Dragon Fist',
+        
+        61 => 'Merchant',
+        62 => 'Blacksmith',
+        63 => 'Whitesmith',
+        64 => 'Mechanic',
+        65 => 'Lightbringer',
+        
+        132 => 'Alchemist',
+        133 => 'Creator',
+        134 => 'Genetic',
+        135 => 'Begetter',
+        
+        143 => 'Advanced Novice',
+        144 => 'Super Novice',
+        145 => 'Novice Guardian',
+        
+        150 => 'Novice Doram',
+        151 => 'Warlock Doram',
+        152 => 'Spiritualist',
+        153 => 'Summoner',
+        154 => 'Animist',
+        155 => 'Spirit Whisperer'
+    ];
+
     public function getCards(Request $request) {
         if ($request->has('url')) {
             $url = $request->input('url');
@@ -832,7 +918,8 @@ class NpcController extends Controller
     }
 
     public function getMissingInfoInHeadwears() {
-        $items = Item::whereIn('type_name', $this->headwears__)->get();
+        // $items = Item::whereIn('type_name', $this->headwears__)->get();
+        $items = Item::whereIn('type_name', $this->headwears__)->where('stat_type', null)->get();
 
         foreach ($items as $item) {
             $_item = Item::where('key_id', $item->key_id)->first();
@@ -847,6 +934,9 @@ class NpcController extends Controller
                     }
                     if (array_key_exists("StatExtra", $result['AttrData'])) {
                         $_item->stat_extra = json_encode($result['AttrData']['StatExtra']);
+                    }
+                    if (array_key_exists("Type", $result['AttrData'])) {
+                        $_item->stat_type = json_encode($result['AttrData']['Type']);
                     }
                 }
 
@@ -963,6 +1053,48 @@ class NpcController extends Controller
             ->get();
     }
 
+    private $equips__ = [
+        'Weapon - Sword', 
+        'Weapon - Dagger',
+        'Weapon - Axe',
+        'Weapon - Book',
+        'Weapon - Bow',
+        'Weapon - Katar',
+        'Weapon - Knuckles',
+        'Weapon - Spear',
+        'Whips',
+        'Weapon - Staff',
+        'Weapon - Mace',
+        'Off-hand - Jewelry',
+        'Off-hand - Bracer',
+        'Off-hand - Bangle',
+        'Musical Instrument',
+        'Garments',
+        'Footgears',
+        'Armors',
+        'Accessory',
+        'Off-hand - Shield',
+    ];
 
+    public function addJobClass() {
 
+        $equipments = Item::whereIn('type_name', $this->equips__)->get();
+
+        foreach ($equipments as $equip) {
+            $jobs = [];
+        
+            $can_equip = is_array($equip->can_equip) ? $equip->can_equip : json_decode($equip->can_equip, true);
+            if ($can_equip != null) {
+                $anothecheck = is_array($can_equip) ? $can_equip : json_decode($can_equip, true);
+                foreach($anothecheck as $v) {
+                    $jobs[] = $this->jobs__[$v];
+                }
+            }
+
+            $item = Item::find($equip->id);
+            $item->jobclass = $jobs;
+            $item->save();
+        }
+
+    }
 }

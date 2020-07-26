@@ -112,7 +112,7 @@ class Item extends Model
 
     public function getQualityAttribute($value) {
         if (in_array($this->attributes['type_name'], $this->cards__)) {
-            return $this->attributes['quality'] = $value == 1 ? 'white' : ($value == 2 ? 'green' : ($value == 3 ? 'blue' : $value == 4 ? 'violet' : ''));
+            return $this->attributes['quality'] = $value == 1 ? 'white' : ($value == 2 ? 'green' : ($value == 3 ? 'blue' : ($value == 4 ? 'violet' : '')));
         }
     }
 
@@ -145,4 +145,10 @@ class Item extends Model
             return $this->attributes['type'] = null;
         }
     }
+
+    public function scopeHasCanEquip($query, $jobId) {
+        return $query->where('can_equip', 'like', "%\"{$jobId}\"%");
+    }
+
+
 }

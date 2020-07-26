@@ -29,9 +29,11 @@ use Illuminate\Support\Facades\Route;
 // Route::get('modifySynth', 'NpcController@modifySynth');
 // Route::get('addSlugInItems', 'NpcController@addSlugInItems');
 // Route::get('renameSlots', 'NpcController@renameSlots');
-// Route::get('getMissingInfoInHeadwears', 'NpcController@getMissingInfoInHeadwears');
+Route::get('getMissingInfoInHeadwears', 'NpcController@getMissingInfoInHeadwears');
 // Route::get('getMissingCardImage', 'NpcController@getMissingCardImage');
 //  Route::get('removeAsterisk', 'NpcController@removeAsterisk');
+// Route::get('addJobClass', 'NpcController@addJobClass');
+
 
 // Route::post('getHeadwears', 'NpcController@getHeadwears');
 // Route::post('getCards', 'NpcController@getCards');
@@ -51,18 +53,22 @@ Route::get('/sitemap/headwears', 'SitemapController@headwears');
 
 Route::get('monsters', 'MonsterController@index');
 Route::get('monster/{id}', 'MonsterController@getMonster');
+Route::get('filter-monsters', 'MonsterController@filterMonster');
 
 Route::get('equipments', 'ItemController@equipments');
 Route::get('equipment/{id}', 'ItemController@getEquipment');
+Route::get('filter-equipments', 'ItemController@filterEquipment');
 
 Route::get('cards', 'ItemController@cards');
 Route::get('card/{id}', 'ItemController@getCard');
+Route::get('filter-cards', 'ItemController@filterCard');
 
 Route::get('items', 'ItemController@getItems');
 Route::get('item/{id}', 'ItemController@getItem');
 
 Route::get('headwears', 'ItemController@getHeadwears');
 Route::get('headwear/{id}', 'ItemController@getHeadwear');
+Route::get('filter-headwears', 'ItemController@filterHeadwear');
 
 Route::get('blogs', 'BlogController@index');
 Route::get('blog/{slug}', 'BlogController@getBlog');
