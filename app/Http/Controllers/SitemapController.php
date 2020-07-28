@@ -87,7 +87,59 @@ class SitemapController extends Controller
         'Spice',
         'Vegetable',
         'Zeny',
-        'Gift Box'
+        'Gift Box',
+        "Furniture Blueprint"
+    ];
+
+    private $furnitures__ = [
+        "Furniture - Candlestick",
+        "Furniture - Luxuries",
+        "Furniture - Tree",
+        "Furniture - Cabinet",
+        "Furniture - Carpet",
+        "Furniture - sundries",
+        "Furniture - Wall Painting",
+        "Furniture - Window",
+        "Furniture - Flower",
+        "Furniture - Artwork",
+        "Furniture - Screen",
+        "Furniture - Bookshelf",
+        "Furniture - Desk",
+        "Furniture - Chair",
+        "Furniture - Sofa",
+        "Furniture - Bed",
+        "Furniture - Landscape",
+        "Furniture - Plant",
+        "Furniture - Long Desk",
+        "Furniture - Wall Lamp",
+        "Furniture - Bedside Cupboard",
+        "Furniture - Stake",
+        "Furniture - cut off",
+        "Furniture - Message Board",
+        "Furniture - Bench",
+        "Furniture - Lamp",
+        "Furniture - Fountain",
+        "Furniture - decorations",
+        "Furniture - beautification",
+        "Furniture - Doll",
+        "Furniture - Wardrobe",
+        "Furniture - Fireplace",
+        "Furniture - Phonograph",
+        "Furniture - Short Cabinet",
+        "Furniture - Sport",
+        "Furniture - Atmosphere",
+        "Furniture - Pet House",
+        "Furniture - Map",
+        "Furniture - Worktop",
+        "Furniture - Bath",
+        "Furniture - Television",
+        "Furniture - Calendar",
+        "Furniture - Photo Frame",
+        "Furniture - Standing Mirror",
+        "Furniture - Statue",
+        "Furniture - Kitchen Utensils",
+        "Furniture - Dining Desk",
+        "Furniture - Bar"
     ];
 
 	public function index() {
@@ -155,6 +207,14 @@ class SitemapController extends Controller
             'items' => $items,
         ]);
     }
+
+    public function furnitures() {
+        $furnitures = Item::whereIn('type_name', $this->furnitures__)->orderBy('updated_at', 'desc')->select('id','slug','updated_at')->get();
+
+        return response()->json([
+            'furnitures' => $furnitures,
+        ]);
+    }
     
     public function saveWeeklies(Request $request) {
         $inputs = $request->all();
@@ -164,6 +224,7 @@ class SitemapController extends Controller
 
         return view('weekly')->with(['item' => 'saved', 'event' => $event]);
     }
+    
     
     public function getWeeklies() {
         $event = Event::latest('created_at')->first();

@@ -55,6 +55,7 @@ Route::get('/sitemap/equipments', 'SitemapController@equipments');
 Route::get('/sitemap/items', 'SitemapController@items');
 Route::get('/sitemap/posts', 'SitemapController@blogs');
 Route::get('/sitemap/headwears', 'SitemapController@headwears');
+Route::get('/sitemap/furnitures', 'SitemapController@furnitures');
 
 Route::get('monsters', 'MonsterController@index');
 Route::get('monster/{id}', 'MonsterController@getMonster');
