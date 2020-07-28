@@ -149,7 +149,8 @@ class SitemapController extends Controller
         $headwear = Item::whereIn('type_name', $this->headwears__)->orderBy('updated_at', 'desc')->select('id','updated_at')->first();
         $item = Item::whereIn('type_name', $this->items__)->orderBy('updated_at', 'desc')->select('id','updated_at')->first();
         $monster = Monster::orderBy('updated_at', 'desc')->select('id','updated_at')->first();
-      
+        $furniture = Item::whereIn('type_name', $this->furnitures__)->orderBy('updated_at', 'desc')->select('id','updated_at')->first();
+
         return response()->json([
             'posts' => $post,
             'cards' => $card,
@@ -157,6 +158,7 @@ class SitemapController extends Controller
             'headwears' => $headwear,
             'items' => $item,
             'equipments' => $equipment,
+            'furnitures' => $furniture,
         ]);
 	}
 
