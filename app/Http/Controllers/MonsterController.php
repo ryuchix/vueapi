@@ -86,6 +86,10 @@ class MonsterController extends Controller
                 $q->whereIn('type', ['MINI', 'MVP', 'Monster']);
             } elseif ($request->type == 'Star') {
                 $q->where('star', 1);
+            } elseif ($request->type == 'Monster') {
+                $q->where('type', 'Monster');
+            } elseif ($request->type == 'MINI') {
+                $q->where('type', 'MINI');
             } elseif ($request->type == 'Undead') {
                 $q->where('type', 'MVP')->where('element', 'Undead');
             } else {
