@@ -15,11 +15,11 @@ return [
     |
     */
 
-    'paths' => ['https://ragnarokmobile.net/*'],
+    'paths' => ['*'],
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['*'],
+    'allowed_origins' => ['https://ragnarokmobile.net'],
 
     'allowed_origins_patterns' => [],
 
