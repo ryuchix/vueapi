@@ -86,7 +86,59 @@ class ItemController extends Controller
         'Spice',
         'Vegetable',
         'Zeny',
-        'Gift Box'
+        'Gift Box',
+        "Furniture Blueprint"
+    ];
+
+    private $furnitures__ = [
+        "Furniture - Candlestick",
+        "Furniture - Luxuries",
+        "Furniture - Tree",
+        "Furniture - Cabinet",
+        "Furniture - Carpet",
+        "Furniture - sundries",
+        "Furniture - Wall Painting",
+        "Furniture - Window",
+        "Furniture - Flower",
+        "Furniture - Artwork",
+        "Furniture - Screen",
+        "Furniture - Bookshelf",
+        "Furniture - Desk",
+        "Furniture - Chair",
+        "Furniture - Sofa",
+        "Furniture - Bed",
+        "Furniture - Landscape",
+        "Furniture - Plant",
+        "Furniture - Long Desk",
+        "Furniture - Wall Lamp",
+        "Furniture - Bedside Cupboard",
+        "Furniture - Stake",
+        "Furniture - cut off",
+        "Furniture - Message Board",
+        "Furniture - Bench",
+        "Furniture - Lamp",
+        "Furniture - Fountain",
+        "Furniture - decorations",
+        "Furniture - beautification",
+        "Furniture - Doll",
+        "Furniture - Wardrobe",
+        "Furniture - Fireplace",
+        "Furniture - Phonograph",
+        "Furniture - Short Cabinet",
+        "Furniture - Sport",
+        "Furniture - Atmosphere",
+        "Furniture - Pet House",
+        "Furniture - Map",
+        "Furniture - Worktop",
+        "Furniture - Bath",
+        "Furniture - Television",
+        "Furniture - Calendar",
+        "Furniture - Photo Frame",
+        "Furniture - Standing Mirror",
+        "Furniture - Statue",
+        "Furniture - Kitchen Utensils",
+        "Furniture - Dining Desk",
+        "Furniture - Bar"
     ];
 
     private $jobs__ = [
@@ -436,6 +488,7 @@ class ItemController extends Controller
         $items = Item::whereIn('type_name', $this->items__)->where('name_en', 'LIKE', "%$query%")->orderBy('name_en')->get();
         $cards = Item::whereIn('type_name', $this->cards__)->where('name_en', 'LIKE', "%$query%")->orderBy('name_en')->get();
         $headwears = Item::whereIn('type_name', $this->headwears__)->where('name_en', 'LIKE', "%$query%")->orderBy('name_en')->get();
+        $furnitures = Item::whereIn('type_name', $this->furnitures__)->where('name_en', 'LIKE', "%$query%")->orderBy('name_en')->get();
         $blogs = Blog::orWhere('title', 'LIKE', "%$query%")
                         ->orWhere('content', 'LIKE', "%$query%")
                         ->orWhere('excerpt', 'LIKE', "%$query%")
@@ -447,7 +500,51 @@ class ItemController extends Controller
             'items' => $items, 
             'cards' => $cards, 
             'headwears' => $headwears, 
+            'furnitures' => $furnitures,
             'blogs' => $blogs,  ]);
+    }
+
+    public function getFurnitures() {
+        return Item::whereIn('type_name', $this->furnitures__)->select('id', 'slug', 'type', 'icon', 'score', 'requirements', 'name_en', 'type_name', 'unlock_effect')->orderBy('name_en')->paginate();
+    }
+
+    public function getFurniture($id) {
+        $item = Item::where('slug', $id)->whereIn('type_name', $this->furnitures__)->select('id', 'slug', 'compose_id', 'compose_output_id', 'compose_recipe', 'type', 'icon', 'score', 'requirements', 'name_en', 'type_name', 'unlock_effect')->first();
+        $to = Item::where('key_id', $item->compose_output_id)->select('id', 'slug', 'icon', 'name_en', 'type_name')->first();
+        $from = Item::where('key_id', $item->compose_id)->select('id', 'slug', 'icon', 'name_en', 'type_name', 'stat', 'stat_extra')->first();
+        $item['tradable'] = $item->auction_price == 1 ? true : false;
+        $item['item_to'] = $to;
+        $item['item_from'] = $from;
+        $itemcompose = ItemCompose::where('item_id', $item->id)->with('materials')->get();
+        $item['compose'] = $itemcompose;
+        
+        return $item;
+    }
+
+    public function filterFurniture(Request $request) {
+        $q = Item::query();
+
+        $q->whereIn('type_name', $this->furnitures__)->select('id', 'slug', 'icon', 'score', 'type', 'requirements', 'name_en', 'type_name', 'unlock_effect');
+
+        if ($request->has('type')) {
+            //
+        }
+
+        if ($request->has('unlock')) {
+            if ($request->unlock != 'All') {
+                $unlocks = $request->unlock . ' ';
+                $q->where('unlock_effect', 'LIKE', "%$unlocks%");
+            }
+        }
+        
+        if ($request->has('deposit')) {
+            if ($request->deposit != 'All') {
+                $deposits = $request->deposit . ' ';
+                $q->where('deposit_effect', 'LIKE', "%$deposits%");
+            }
+        }
+
+        return $q->orderBy('name_en')->paginate()->appends($request->all());
     }
 
     public function getCompose() {

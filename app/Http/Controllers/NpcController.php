@@ -1097,4 +1097,204 @@ class NpcController extends Controller
         }
 
     }
+    
+    public function getTypeName() {
+
+        $types = [];
+        $items = Item::where('id', '>=', 3593)->distinct()->select('type_name')->get();
+
+        foreach ($items as $key => $item) {
+            $types[] = $item->type_name;
+        }
+      
+
+        return $types;
+    }
+
+    public function addFurniture() {
+       $json = '
+{"code":0,"status":"success","timeStamp":1595759256,"staticDomain":"https:\/\/rostatic.zhaiwuyu.com","ip":"49.145.201.57","dbArea":4,"data":{"sql":"select sea_x_item.xid, sea_x_item.name, sea_x_item.icon, sea_furniture.type, sea_furniture.row, sea_furniture.col, sea_furniture.height, sea_furniture.score, sea_furniture.unlock, sea_furniture.adventure_buff, sea_furniture.is_compose from sea_furniture,sea_x_item where sea_furniture.status=0 and sea_furniture.xid=sea_x_item.xid order by sea_furniture.id desc limit 300,30","page":11,"pageSize":30,"pageCount":11,"total":312,"list":[{"id":"30011","name":"Bed - Deep Dream","icon":"item_30011","type":7,"row":0,"col":0,"height":0,"score":40,"unlock":"Activate Home Functions to Unlock","adventureBuff":"Max HP +40","isCompose":1},{"id":"30010","name":"Desk - Carving Time","icon":"item_30010","type":3,"row":0,"col":0,"height":0,"score":16,"unlock":"Activate Home Functions to Unlock","adventureBuff":"Max HP +60","isCompose":1},{"id":"30009","name":"Bedside Cupboard - Greenee","icon":"item_30009","type":3,"row":0,"col":0,"height":0,"score":16,"unlock":"Activate Home Functions to Unlock","adventureBuff":"Max HP +60","isCompose":1},{"id":"30008","name":"Chair - Whisper in the Woods","icon":"item_30008","type":17,"row":0,"col":0,"height":0,"score":33,"unlock":"Activate Home Functions to Unlock","adventureBuff":"Max HP +30, Atk +1.5","isCompose":1},{"id":"30007","name":"Chair - Pure Autumn","icon":"item_30007","type":2,"row":0,"col":0,"height":0,"score":8,"unlock":"Activate Home Functions to Unlock","adventureBuff":"Max HP +20, Atk +1","isCompose":1},{"id":"30006","name":"Carpet - \u201cWelcome Home\u201d","icon":"item_30006","type":6,"row":0,"col":0,"height":0,"score":16,"unlock":"Activate Home Functions to Unlock","adventureBuff":"Def +1.5, M.Def +1.5","isCompose":1},{"id":"30005","name":"Carpet - Chubby Fluffy","icon":"item_30005","type":6,"row":0,"col":0,"height":0,"score":16,"unlock":"Activate Home Functions to Unlock","adventureBuff":"Def +1.5, M.Def +1.5","isCompose":1},{"id":"30004","name":"Wall Lamp - Glimmering","icon":"item_30004","type":4,"row":0,"col":0,"height":0,"score":8,"unlock":"Activate Home Functions to Unlock","adventureBuff":"Max HP +20, M.Atk +1","isCompose":1},{"id":"30003","name":"Cabinet - Melodious","icon":"item_30003","type":3,"row":0,"col":0,"height":0,"score":16,"unlock":"Activate Home Functions to Unlock","adventureBuff":"Max HP +60","isCompose":1},{"id":"30002","name":"Sofa - Time Rocking Chair","icon":"item_30002","type":2,"row":0,"col":0,"height":0,"score":33,"unlock":"Activate Home Functions to Unlock","adventureBuff":"Max HP +30, Atk +1.5","isCompose":1},{"id":"30001","name":"Fireplace - Flowing Fire","icon":"item_30001","type":1,"row":0,"col":0,"height":0,"score":55,"unlock":"Activate Home Functions to Unlock","adventureBuff":"Max HP +60, M.Atk +3","isCompose":1},{"id":"30000","name":"Bookshelf - Treasure","icon":"item_30000","type":10,"row":0,"col":0,"height":0,"score":29,"unlock":"Activate Home Functions to Unlock","adventureBuff":"Max HP +30, M.Atk +1.5","isCompose":1}]}}
+
+';
+     $ids = [];
+
+     $d = json_decode($json, true);
+     $results = $d['data']['list'];
+
+     foreach ($results as $key => $result) {
+         $ids[] = $result['id'];
+        //  $ids['score'] = $result['score'];
+
+        $item = Item::where('key_id', $result['id'])->first();
+        $item->stat_type = $result['type'] == '' ? NULL : $result['type'];
+        $item->save();
+     }
+
+    // return ($results);
+    
+    //  foreach ($ids as $id) {
+    //     try {
+            
+    //         $json = file_get_contents('https://www.romcodex.com/api/item/'.$id);
+    //         $result = json_decode($json, true);
+
+    //         $checkItem = Item::where('key_id', $id)->first();
+
+    //         if (!$checkItem) {
+
+    //             copy('https://www.romcodex.com/icons/item/'.$result['Icon'].'.png', public_path('/uploads/items/'.Str::slug(array_key_exists("NameZh__EN", $result) ? $result['NameZh__EN'] : ''.'-'.$result['TypeName'], '-').'-img.jpg'));
+
+    //             $item = new Item();
+    //             $item->key_id = $result['key_id'];
+    //             $item->sell_price = array_key_exists("SellPrice", $result) ? $result['SellPrice'] : null;
+    //             $item->icon = Str::slug(array_key_exists("NameZh__EN", $result) ? $result['NameZh__EN'] : ''.'-'.$result['TypeName'], '-').'-img.jpg';
+    //             $item->desc = array_key_exists("Desc", $result) ? $result['Desc'] : null;
+    //             $item->desc_en = array_key_exists("Desc__EN", $result) ? $result['Desc__EN'] : null;
+    //             $item->type = array_key_exists("Type", $result) ? $result['Type'] : null;
+    //             $item->name_ch = array_key_exists("NameZh", $result) ? $result['NameZh'] : null;
+    //             $item->name_en = array_key_exists("NameZh__EN", $result) ? $result['NameZh__EN'] : null;
+    //             $item->quality = array_key_exists("Quality", $result) ? $result['Quality'] : null;
+    //             $item->special = array_key_exists("Condition", $result) ? $result['Condition'] : null;
+    //             $item->type_name = array_key_exists("TypeName", $result) ? $result['TypeName'] : null;
+    //             $item->slug = array_key_exists("NameZh__EN", $result) ? $this->createSlug($result['NameZh__EN']) : null;
+                
+    //             $item->auction_price = array_key_exists("AuctionPrice", $result) ? $result['AuctionPrice'] : null;
+    //             $item->compose_output_id = array_key_exists("ComposeOutputID", $result) ? $result['ComposeOutputID'] : null;
+    //             $item->compose_id = array_key_exists("ComposeID", $result) ? $result['ComposeID'] : null;
+
+    //             if (array_key_exists("AttrData", $result)) {
+    //                 if (array_key_exists("Stat", $result['AttrData'])) {
+    //                     $item->stat = json_encode($result['AttrData']['Stat']);
+    //                 }
+    //                 if (array_key_exists("StatExtra", $result['AttrData'])) {
+    //                     $item->stat_extra = json_encode($result['AttrData']['StatExtra']);
+    //                 }
+    //                 if (array_key_exists("Type", $result['AttrData'])) {
+    //                     $item->stat_type = json_encode($result['AttrData']['Type']);
+    //                 }
+    //                 if (array_key_exists("CanEquip", $result['AttrData'])) {
+    //                     $item->can_equip = json_encode($result['AttrData']['CanEquip']);
+    //                 }
+    //             }
+
+    //             if (array_key_exists("UnlockEffect", $result)) {
+    //                 foreach ($result['UnlockEffect'] as $unlock) {
+    //                     $item->unlock_effect = json_encode($unlock['Dsc__EN']);
+    //                 }
+    //             }
+
+    //             if (array_key_exists("DepositEffect", $result)) {
+    //                 foreach ($result['DepositEffect'] as $unlock) {
+    //                     $item->deposit_effect = json_encode($unlock['Dsc__EN']);
+    //                 }
+    //             }
+
+    //             $item->compose_recipe = array_key_exists("ComposeRecipe", $result);
+    //             $item->prior_equipment = array_key_exists("PriorEquipment", $result) ? $result['PriorEquipment']['key_id'] : null;
+
+    //             $item->save();
+
+    //             if (array_key_exists("ComposeRecipe", $result)) {
+
+    //                 if ($result['TypeName'] == 'Furniture Blueprint') {
+    //                     foreach ($result['ComposeRecipe']['composeTo'] as $key => $compose) {
+
+    //                         $checkCompose = ItemCompose::where('item_id', $item->id)->first();
+    //                         if ($checkCompose) {
+    
+    //                             $composematerials = ItemComposeMaterial::where('item_compose_id', $checkCompose->id)->get();
+    //                             foreach ($$composematerials as $composematerial) {
+    //                                 $composematerial->delete();
+    //                             }
+    
+    //                             $checkCompose->delete();
+    //                         }
+    
+    //                         $itemcompose = new ItemCompose();
+    //                         $itemcompose->item_id = $item->id;
+    //                         $itemcompose->is_input = $compose['isInput'];      
+    //                         $itemcompose->cost = $compose['cost'];
+    //                         $itemcompose->item_output = $compose['output'][0]['id'];
+    //                         $itemcompose->save();
+    
+    //                         foreach ($compose['input'] as $key => $material) {
+    //                             $checkitem = Item::where('key_id', $material['id'])->first();
+    
+    //                             $itemcomposematerial = new ItemComposeMaterial();
+    //                             $itemcomposematerial->item_compose_id = $itemcompose->id;
+    //                             $itemcomposematerial->item_id = $material['id'];
+    //                             $itemcomposematerial->qty = $material['quantity'];
+    //                             $itemcomposematerial->save();
+
+    //                             if ($checkitem == null) {
+    //                                 $this->getHeadwearss($material['id']);
+    //                             }
+                                
+    //                         }
+    //                     }
+    //                 } else {
+    //                     foreach ($result['ComposeRecipe']['composeFrom'] as $key => $compose) {
+
+    //                         $checkCompose = ItemCompose::where('item_id', $item->id)->first();
+    //                         if ($checkCompose) {
+    
+    //                             $composematerials = ItemComposeMaterial::where('item_compose_id', $checkCompose->id)->get();
+    //                             foreach ($$composematerials as $composematerial) {
+    //                                 $composematerial->delete();
+    //                             }
+    
+    //                             $checkCompose->delete();
+    //                         }
+    
+    //                         $itemcompose = new ItemCompose();
+    //                         $itemcompose->item_id = $item->id;
+    //                         $itemcompose->is_input = $compose['isInput'];      
+    //                         $itemcompose->cost = $compose['cost'];
+    //                         $itemcompose->item_output = $compose['output'][0]['id'];
+    //                         $itemcompose->save();
+    
+    //                         foreach ($compose['input'] as $key => $material) {
+    //                             $checkitem = Item::where('key_id', $material['id'])->first();
+    
+    //                             $itemcomposematerial = new ItemComposeMaterial();
+    //                             $itemcomposematerial->item_compose_id = $itemcompose->id;
+    //                             $itemcomposematerial->item_id = $material['id'];
+    //                             $itemcomposematerial->qty = $material['quantity'];
+    //                             $itemcomposematerial->save();
+
+    //                             if ($checkitem == null) {
+    //                                 $this->getHeadwearss($material['id']);
+    //                             }
+                                
+    //                         }
+    //                     }
+    //                 }
+    //             }
+                
+    //         }
+   
+
+    //     } catch (\Throwable $th) {
+    //         throw $th;
+    //     }
+    //  }
+    //  foreach ($results as $key => $result) {
+    //     // $ids[] = $result['id'];
+    //    //  $ids['score'] = $result['score'];
+
+    //    $item = Item::where('key_id', $result['id'])->first();
+    //    $item->score = $result['score'] == '' ? NULL : $result['score'];
+    //    $item->requirements = $result['unlock'] == '' ? NULL : $result['unlock'];
+    //    $item->save();
+    // }
+
+
+
+
+
+
+
+    }
+
+
 }

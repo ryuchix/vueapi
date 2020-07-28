@@ -29,10 +29,15 @@ use Illuminate\Support\Facades\Route;
 // Route::get('modifySynth', 'NpcController@modifySynth');
 // Route::get('addSlugInItems', 'NpcController@addSlugInItems');
 // Route::get('renameSlots', 'NpcController@renameSlots');
-Route::get('getMissingInfoInHeadwears', 'NpcController@getMissingInfoInHeadwears');
+// Route::get('getMissingInfoInHeadwears', 'NpcController@getMissingInfoInHeadwears');
 // Route::get('getMissingCardImage', 'NpcController@getMissingCardImage');
-//  Route::get('removeAsterisk', 'NpcController@removeAsterisk');
+Route::get('removeAsterisk', 'NpcController@removeAsterisk');
 // Route::get('addJobClass', 'NpcController@addJobClass');
+
+
+Route::get('addFurniture', 'NpcController@addFurniture');
+
+Route::get('getTypeName', 'NpcController@getTypeName');
 
 
 // Route::post('getHeadwears', 'NpcController@getHeadwears');
@@ -69,6 +74,10 @@ Route::get('item/{id}', 'ItemController@getItem');
 Route::get('headwears', 'ItemController@getHeadwears');
 Route::get('headwear/{id}', 'ItemController@getHeadwear');
 Route::get('filter-headwears', 'ItemController@filterHeadwear');
+
+Route::get('furnitures', 'ItemController@getFurnitures');
+Route::get('furniture/{id}', 'ItemController@getFurniture');
+Route::get('filter-furnitures', 'ItemController@filterFurniture');
 
 Route::get('blogs', 'BlogController@index');
 Route::get('blog/{slug}', 'BlogController@getBlog');
