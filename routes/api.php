@@ -44,43 +44,43 @@ Route::get('getTypeName', 'NpcController@getTypeName');
 // Route::post('getCards', 'NpcController@getCards');
 // api
 
-Route::post('saveWeeklies', 'SitemapController@saveWeeklies');
-Route::get('getWeeklies', 'SitemapController@getWeeklies');
+Route::post('saveWeeklies', 'SitemapController@saveWeeklies')->middleware('cors');
+Route::get('getWeeklies', 'SitemapController@getWeeklies')->middleware('cors');
 
 // sitemaps
-Route::get('/sitemap', 'SitemapController@index');
-Route::get('/sitemap/monsters', 'SitemapController@monsters');
-Route::get('/sitemap/cards', 'SitemapController@cards');
-Route::get('/sitemap/equipments', 'SitemapController@equipments');
-Route::get('/sitemap/items', 'SitemapController@items');
-Route::get('/sitemap/posts', 'SitemapController@blogs');
-Route::get('/sitemap/headwears', 'SitemapController@headwears');
-Route::get('/sitemap/furnitures', 'SitemapController@furnitures');
+Route::get('/sitemap', 'SitemapController@index')->middleware('cors');
+Route::get('/sitemap/monsters', 'SitemapController@monsters')->middleware('cors');
+Route::get('/sitemap/cards', 'SitemapController@cards')->middleware('cors');
+Route::get('/sitemap/equipments', 'SitemapController@equipments')->middleware('cors');
+Route::get('/sitemap/items', 'SitemapController@items')->middleware('cors');
+Route::get('/sitemap/posts', 'SitemapController@blogs')->middleware('cors');
+Route::get('/sitemap/headwears', 'SitemapController@headwears')->middleware('cors');
+Route::get('/sitemap/furnitures', 'SitemapController@furnitures')->middleware('cors');
 
-Route::get('monsters', 'MonsterController@index');
-Route::get('monster/{id}', 'MonsterController@getMonster');
-Route::get('filter-monsters', 'MonsterController@filterMonster');
+Route::get('monsters', 'MonsterController@index')->middleware('cors');
+Route::get('monster/{id}', 'MonsterController@getMonster')->middleware('cors');
+Route::get('filter-monsters', 'MonsterController@filterMonster')->middleware('cors');
 
-Route::get('equipments', 'ItemController@equipments');
-Route::get('equipment/{id}', 'ItemController@getEquipment');
-Route::get('filter-equipments', 'ItemController@filterEquipment');
+Route::get('equipments', 'ItemController@equipments')->middleware('cors');
+Route::get('equipment/{id}', 'ItemController@getEquipment')->middleware('cors');
+Route::get('filter-equipments', 'ItemController@filterEquipment')->middleware('cors');
 
-Route::get('cards', 'ItemController@cards');
-Route::get('card/{id}', 'ItemController@getCard');
-Route::get('filter-cards', 'ItemController@filterCard');
+Route::get('cards', 'ItemController@cards')->middleware('cors');
+Route::get('card/{id}', 'ItemController@getCard')->middleware('cors');
+Route::get('filter-cards', 'ItemController@filterCard')->middleware('cors');
 
-Route::get('items', 'ItemController@getItems');
-Route::get('item/{id}', 'ItemController@getItem');
+Route::get('items', 'ItemController@getItems')->middleware('cors');
+Route::get('item/{id}', 'ItemController@getItem')->middleware('cors');
 
-Route::get('headwears', 'ItemController@getHeadwears');
-Route::get('headwear/{id}', 'ItemController@getHeadwear');
-Route::get('filter-headwears', 'ItemController@filterHeadwear');
+Route::get('headwears', 'ItemController@getHeadwears')->middleware('cors');
+Route::get('headwear/{id}', 'ItemController@getHeadwear')->middleware('cors');
+Route::get('filter-headwears', 'ItemController@filterHeadwear')->middleware('cors');
 
-Route::get('furnitures', 'ItemController@getFurnitures');
-Route::get('furniture/{id}', 'ItemController@getFurniture');
-Route::get('filter-furnitures', 'ItemController@filterFurniture');
+Route::get('furnitures', 'ItemController@getFurnitures')->middleware('cors');
+Route::get('furniture/{id}', 'ItemController@getFurniture')->middleware('cors');
+Route::get('filter-furnitures', 'ItemController@filterFurniture')->middleware('cors');
 
-Route::get('blogs', 'BlogController@index');
-Route::get('blog/{slug}', 'BlogController@getBlog');
+Route::get('blogs', 'BlogController@index')->middleware('cors');
+Route::get('blog/{slug}', 'BlogController@getBlog')->middleware('cors');
 
-Route::get('search/{query}', 'ItemController@search');
+Route::get('search/{query}', 'ItemController@search')->middleware('cors');
