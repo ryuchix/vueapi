@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'paths' => ['api/*'],
+    'paths' => ['https://ragnarokmobile.net/*'],
 
     'allowed_methods' => ['*'],
 
