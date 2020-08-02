@@ -11,6 +11,10 @@ use Str;
 class PetController extends Controller
 {
 
+    private $sizes__ = ['Small', 'Medium', 'Large'];
+    private $types__ = ['Mini', 'MVP', 'Star', 'Undead'];
+    private $races__ = ['Angel', 'Brute', 'DemiHuman', 'Demon', 'Dragon', 'Fish', 'Formless', 'Insect', 'Plant', 'Undead'];
+
     public function index() {
         return Pet::with('skills')->orderBy('key_id', 'desc')->paginate();
     }
@@ -40,50 +44,20 @@ class PetController extends Controller
 
         if ($request->has('size')) {
             if ($request->size == 'All') {
-                $q->whereIn('size', ['S', 'M', 'L']);
+                $q->whereIn('size', ['Small', 'Medium', '3Large']);
             } else {
-                $q->where('size', $request->size[0]);
+                $q->where('size', $request->size);
             }
         }
 
-        if ($request->has('type')) {
-            if ($request->type == 'All') {
-                $q->whereIn('type', ['MINI', 'MVP', 'Monster']);
-            } elseif ($request->type == 'Star') {
-                $q->where('star', 1);
-            } elseif ($request->type == 'Monster') {
-                $q->where('type', 'Monster');
-            } elseif ($request->type == 'MINI') {
-                $q->where('type', 'MINI');
-            } elseif ($request->type == 'Undead') {
-                $q->where('type', 'MVP')->where('element', 'Undead');
-            } else {
-                $q->where('type', $request->type);
+        if ($request->has('unlock')) {
+            if ($request->unlock != 'All') {
+                $unlocks = $request->unlock;
+                $q->where('unlock', 'LIKE', "%$unlocks%");
             }
         }
 
-        if ($request->has('order')) {
-            if ($request->order == 'Name ASC') {
-                return $q->orderBy('name_en', 'ASC')->paginate()->appends($request->all());
-            }
-            if ($request->order == 'Name Desc') {
-                return $q->orderBy('name_en', 'DESC')->paginate()->appends($request->all());
-            } 
-            if ($request->order == 'Level ASC') {
-                return $q->orderByRaw('LENGTH(level) asc')->paginate()->appends($request->all());
-            }
-            if ($request->order == 'Level Desc') {
-                return $q->orderByRaw('LENGTH(level) desc')->paginate()->appends($request->all());
-            } 
-            if ($request->order == 'Base Exp') {
-                return $q->orderByRaw('LENGTH(base_exp) desc')->paginate()->appends($request->all());
-            } 
-            if ($request->order == 'Job Exp') {
-                return $q->orderByRaw('LENGTH(job_exp) desc')->paginate()->appends($request->all());
-            }
-        } else {
-            return $q->paginate()->appends($request->all());
-        }
+        return $q->paginate()->appends($request->all());
         
     }
 
@@ -259,17 +233,5 @@ class PetController extends Controller
         }
 
     }
-
-
-
-
-
-
-
-
-
-
-
-
 
 }

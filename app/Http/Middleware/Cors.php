@@ -19,7 +19,8 @@ class Cors
       $allowedOrigins = [
           'http://192.168.1.6:8080', 
           'https://ragnarokmobile.net', 
-          'https://www.ragnarokmobile.net'
+          'https://www.ragnarokmobile.net',
+          'http://192.168.1.2:8080'
         ];
     
       if($request->server('HTTP_ORIGIN')){

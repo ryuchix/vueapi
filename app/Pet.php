@@ -8,6 +8,7 @@ class Pet extends Model
 {
     protected $hidden = ['created_at', 'key_id'];
 
+    protected $table = 'pets';
 
     public function skills() {
         return $this->hasMany('App\PetSkill', 'pet_id');
@@ -45,90 +46,6 @@ class Pet extends Model
     
             return $pet;
         }
-    }
-
-    public function getElementAttribute($value) {
-        if ($value == 1) {
-            $value = 'Earth';
-        }
-        if ($value == 3) {
-            $value = 'Water';
-        }
-        if ($value == 5) {
-            $value = 'Holy';
-        }
-        if ($value == 7) {
-            $value = 'Ghost';
-        }
-        if ($value == 9) {
-            $value = 'Poison';
-        }
-        if ($value == 0) {
-            $value = 'Neutral';
-        }
-        if ($value == 2) {
-            $value = 'Wind';
-        }
-        if ($value == 4) {
-            $value = 'Fire';
-        }
-        if ($value == 6) {
-            $value = 'Shadow';
-        }
-        if ($value == 8) {
-            $value = 'Undead';
-        }
-
-        return $value;
-    }
-
-    public function getRaceAttribute($value) {
-        if ($value == 1) {
-            $value = 'DemiHuman';
-        }
-        if ($value == 3) {
-            $value = 'Brute';
-        }
-        if ($value == 5) {
-            $value = 'Fish';
-        }
-        if ($value == 7) {
-            $value = 'Demon';
-        }
-        if ($value == 9) {
-            $value = 'Dragon';
-        }
-        if ($value == 0) {
-            $value = 'Formless';
-        }
-        if ($value == 2) {
-            $value = 'Plant';
-        }
-        if ($value == 4) {
-            $value = 'Insect';
-        }
-        if ($value == 6) {
-            $value = 'Angel';
-        }
-        if ($value == 8) {
-            $value = 'Undead';
-        }
-
-        return $value;
-    }
-
-    public function getSizeAttribute($value) {
-        if ($value == 1) {
-            $value = 'Small';
-        }
-        if ($value == 2) {
-            $value = 'Medium';
-        }
-        if ($value == 3) {
-            $value = 'Large';
-        }
-
-        return $value;
     }
 
     public function getUpdatedAtAttribute($value) {
