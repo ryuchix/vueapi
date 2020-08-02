@@ -35,9 +35,9 @@ Route::get('removeAsterisk', 'NpcController@removeAsterisk');
 // Route::get('addJobClass', 'NpcController@addJobClass');
 
 
-Route::get('addFurniture', 'NpcController@addFurniture');
+// Route::get('addFurniture', 'NpcController@addFurniture');
 
-Route::get('getTypeName', 'NpcController@getTypeName');
+// Route::get('getTypeName', 'NpcController@getTypeName');
 
 
 // Route::post('getHeadwears', 'NpcController@getHeadwears');
@@ -56,6 +56,7 @@ Route::get('/sitemap/items', 'SitemapController@items')->middleware('cors');
 Route::get('/sitemap/posts', 'SitemapController@blogs')->middleware('cors');
 Route::get('/sitemap/headwears', 'SitemapController@headwears')->middleware('cors');
 Route::get('/sitemap/furnitures', 'SitemapController@furnitures')->middleware('cors');
+Route::get('/sitemap/pets', 'SitemapController@pets')->middleware('cors');
 
 Route::get('monsters', 'MonsterController@index')->middleware('cors');
 Route::get('monster/{id}', 'MonsterController@getMonster')->middleware('cors');
@@ -84,3 +85,9 @@ Route::get('blogs', 'BlogController@index')->middleware('cors');
 Route::get('blog/{slug}', 'BlogController@getBlog')->middleware('cors');
 
 Route::get('search/{query}', 'ItemController@search')->middleware('cors');
+
+Route::get('pets', 'PetController@index')->middleware('cors');
+Route::get('pet/{id}', 'PetController@getPet')->middleware('cors');
+Route::get('filter-pets', 'PetController@filterPet')->middleware('cors');
+
+Route::get('savePet', 'PetController@savePet');

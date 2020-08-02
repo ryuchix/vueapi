@@ -21,6 +21,7 @@ use App\ItemCompose;
 use App\ItemComposeMaterial;
 use App\Blog;
 use App\Event;
+use App\Pet;
 use Str;
 
 class SitemapController extends Controller
@@ -150,6 +151,7 @@ class SitemapController extends Controller
         $item = Item::whereIn('type_name', $this->items__)->orderBy('updated_at', 'desc')->select('id','updated_at')->first();
         $monster = Monster::orderBy('updated_at', 'desc')->select('id','updated_at')->first();
         $furniture = Item::whereIn('type_name', $this->furnitures__)->orderBy('updated_at', 'desc')->select('id','updated_at')->first();
+        $pet = Pet::orderBy('updated_at', 'desc')->select('id','updated_at')->first();
 
         return response()->json([
             'posts' => $post,
@@ -159,6 +161,7 @@ class SitemapController extends Controller
             'items' => $item,
             'equipments' => $equipment,
             'furnitures' => $furniture,
+            'pets' => $pet,
         ]);
 	}
 
@@ -215,6 +218,14 @@ class SitemapController extends Controller
 
         return response()->json([
             'furnitures' => $furnitures,
+        ]);
+    }
+
+    public function pets() {
+        $pets = Pet::orderBy('updated_at', 'desc')->select('id','slug','updated_at')->get();
+
+        return response()->json([
+            'pets' => $pets,
         ]);
     }
     

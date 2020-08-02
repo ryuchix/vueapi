@@ -87,7 +87,8 @@ class ItemController extends Controller
         'Vegetable',
         'Zeny',
         'Gift Box',
-        "Furniture Blueprint"
+        "Furniture Blueprint",
+        'Pet material'
     ];
 
     private $furnitures__ = [
@@ -228,7 +229,7 @@ class ItemController extends Controller
     ];
 
     public function equipments() {
-        return Item::whereIn('type_name', $this->equips__)->where('quality', '!=', 1)->orderBy('name_en')->paginate();
+        return Item::whereIn('type_name', $this->equips__)->where('quality', '!=', 1)->orderBy('key_id', 'desc')->paginate();
     }
 
     public function getEquipment($id) {
@@ -346,7 +347,7 @@ class ItemController extends Controller
             }
         }
 
-        return $q->orderBy('name_en')->paginate()->appends($request->all());
+        return $q->orderBy('key_id', 'desc')->paginate()->appends($request->all());
 
     }
 
