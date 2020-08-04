@@ -20,6 +20,7 @@ use App\MapMonster;
 use App\ItemCompose;
 use App\ItemComposeMaterial;
 use App\Blog;
+use App\Pet;
 
 use Str;
 
