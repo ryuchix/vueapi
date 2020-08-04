@@ -490,6 +490,7 @@ class ItemController extends Controller
         $cards = Item::whereIn('type_name', $this->cards__)->where('name_en', 'LIKE', "%$query%")->orderBy('name_en')->get();
         $headwears = Item::whereIn('type_name', $this->headwears__)->where('name_en', 'LIKE', "%$query%")->orderBy('name_en')->get();
         $furnitures = Item::whereIn('type_name', $this->furnitures__)->where('name_en', 'LIKE', "%$query%")->orderBy('name_en')->get();
+        $pets = Pet::where('name', 'LIKE', "%$query%")->orderBy('name')->get();
         $blogs = Blog::orWhere('title', 'LIKE', "%$query%")
                         ->orWhere('content', 'LIKE', "%$query%")
                         ->orWhere('excerpt', 'LIKE', "%$query%")
@@ -502,7 +503,9 @@ class ItemController extends Controller
             'cards' => $cards, 
             'headwears' => $headwears, 
             'furnitures' => $furnitures,
-            'blogs' => $blogs,  ]);
+            'blogs' => $blogs,
+            'pets' => $pets,
+        ]);
     }
 
     public function getFurnitures() {
